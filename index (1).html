@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="no-referrer">
+<title>@IMPRESSION_CRICKET</title>
+
+<!-- Plyr + HLS.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    font-family: sans-serif;
+  }
+
+  #player-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* 16:9 responsive video */
+  #plyr-player {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: black;
+  }
+
+  /* Telegram button */
+  #telegramButton {
+    display: block;
+    width: 220px;
+    margin: 15px auto;
+    padding: 12px 20px;
+    background: #0088cc;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  #telegramButton:hover {
+    background: #00a2e8;
+    transform: scale(1.05);
+  }
+
+  /* Popup styles */
+  #popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+  }
+
+  .modal {
+    background: #1e1e1e;
+    padding: 25px 30px;
+    border-radius: 12px;
+    text-align: center;
+    color: #fff;
+    max-width: 300px;
+    width: 90%;
+    box-shadow: 0 0 20px rgba(0, 136, 204, 0.5);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal h2 {
+    margin-top: 0;
+    color: #0088cc;
+  }
+
+  .modal button {
+    margin: 10px 5px 0;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  #joinButton {
+    background: #0088cc;
+    color: #fff;
+  }
+
+  #joinButton:hover {
+    background: #00a2e8;
+  }
+
+  #closeButton {
+    background: #444;
+    color: #fff;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
+  }
+
+  /* Fullscreen styling to maintain 16:9 */
+  :fullscreen #plyr-player,
+  :-webkit-full-screen #plyr-player {
+    width: 100%;
+    height: auto;
+    max-height: 100vh;
+    aspect-ratio: 16 / 9;
+    margin: auto;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div id="player-container">
+  <video id="plyr-player" controls playsinline></video>
+  <button id="telegramButton">Join Telegram </button>
+</div>
+
+<script>
+  // --- Plyr + HLS Setup ---
+  function getQueryParam(param) {
+    return new URLSearchParams(window.location.search).get(param);
+  }
+
+  const videoSrc = getQueryParam('url');
+  const video = document.getElementById('plyr-player');
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(videoSrc);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      const availableQualities = hls.levels.map(l => l.height).filter((v,i,a) => a.indexOf(v)===i);
+
+      const player = new Plyr(video, {
+        autoplay: true,
+        muted: true,
+        settings: ['quality', 'speed', 'loop'],
+        quality: {
+          default: availableQualities[0],
+          options: availableQualities,
+          forced: true,
+          onChange: (newQuality) => {
+            hls.levels.forEach((level, levelIndex) => {
+              if (level.height === newQuality) hls.currentLevel = levelIndex;
+            });
+          }
+        }
+      });
+
+      if (availableQualities.length) hls.currentLevel = hls.levels.length - 1;
+    });
+  } else {
+    video.src = videoSrc;
+    new Plyr(video, { autoplay: true, muted: true });
+  }
+
+  // --- Telegram popup ---
+  window.addEventListener("load", function () {
+    const container = document.createElement('div');
+    container.id = 'popup-container';
+    document.body.appendChild(container);
+
+    const popup = document.createElement('div');
+    popup.classList.add('modal');
+
+    popup.innerHTML = `
+      <h2>Support Us!</h2>
+      <p>Join our Telegram channel <br><strong>@IMPRESSION_CRICKET</strong> for more updates.</p>
+      <button id="joinButton">Join Now</button>
+      <button id="closeButton">Already Joined</button>
+    `;
+
+    container.appendChild(popup);
+
+    popup.querySelector('#joinButton').onclick = () => {
+      window.open("https://t.me/+rwZKMV0-L8wyOTll", "_blank");
+      container.remove();
+    };
+    popup.querySelector('#closeButton').onclick = () => container.remove();
+  });
+
+  // --- Telegram button under player ---
+  document.getElementById('telegramButton').onclick = () => {
+    window.open("https://t.me/+rwZKMV0-L8wyOTll", "_blank");
+  };
+
+  // --- Fullscreen landscape ---
+  function lockLandscape() {
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(() => {});
+    }
+  }
+
+  function unlockOrientation() {
+    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+  }
+
+  function handleFullscreenChange() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      lockLandscape();
+    } else {
+      unlockOrientation();
+    }
+  }
+
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+</script>
+
+</body>
+</html>
