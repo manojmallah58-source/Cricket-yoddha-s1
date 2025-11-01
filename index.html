@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,50 +59,62 @@ color:#fff; padding:10px; border-radius:8px; display:none; z-index:1000;
 <video id="video" playsinline controls></video>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<!-- DASH Player -->
+<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
 <script>
 
-// ✅ Your Stream Link (multi-quality)
-const stream = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+// ✅ MPD Stream Link
+const stream = "https://awslive02.stan.video/out/v1/8f4597b6d0284fbda1608aa1a4d2a61b/index.mpd";
 
-function showQualityMenu(levels, hls) {
+function showQuality(levels, player){
 const menu = document.getElementById("qualityMenu");
 menu.innerHTML = "";
 
-levels.forEach((level, i) => {
-const opt = document.createElement("div");
-opt.className = "quality-item";
-opt.innerText = level.height + "p";
-opt.onclick = () => { 
-hls.currentLevel = i; 
-menu.style.display = "none"; 
-};
-menu.appendChild(opt);
-});
-
-// Auto Mode
+// Auto
 const auto = document.createElement("div");
 auto.className = "quality-item";
 auto.innerText = "Auto";
-auto.onclick = () => { hls.currentLevel = -1; menu.style.display = "none"; };
+auto.onclick = () => { 
+player.updateSettings({'streaming':{'abr':{'autoSwitchBitrate':{'video':true}}}});
+menu.style.display="none";
+};
 menu.appendChild(auto);
+
+levels.forEach((level, i)=>{
+const opt = document.createElement("div");
+opt.className="quality-item";
+opt.innerText = level.height + "p";
+opt.onclick = () => {
+player.setQualityFor("video", i);
+player.updateSettings({'streaming':{'abr':{'autoSwitchBitrate':{'video':false}}}});
+menu.style.display="none";
+};
+menu.appendChild(opt);
+});
 }
 
 function toggleQuality(){
 let menu = document.getElementById("qualityMenu");
-menu.style.display = menu.style.display === "block" ? "none" : "block";
+menu.style.display = menu.style.display==="block" ? "none" : "block";
 }
 
 function initPlayer(){
-const v = document.getElementById("video");
-if(Hls.isSupported()){
-const hls = new Hls();
-hls.loadSource(stream);
-hls.attachMedia(v);
-hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
-showQualityMenu(data.levels, hls);
+const video = document.getElementById("video");
+const player = dashjs.MediaPlayer().create();
+player.initialize(video, stream, true);
+
+// Disable auto for manual selection
+player.updateSettings({
+'streaming': {
+'abr': { 'autoSwitchBitrate': { 'video': false } }
+}
 });
-}else{ v.src = stream; }
+
+player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, ()=>{
+const levels = player.getBitrateInfoListFor("video");
+showQuality(levels, player);
+});
 }
 
 function joinNow(){
