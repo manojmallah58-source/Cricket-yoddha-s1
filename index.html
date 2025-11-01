@@ -4,120 +4,124 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Live TV</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
 <style>
-body { background:black; margin:0; font-family:Arial; }
+body { background:black;margin:0;font-family:Arial; }
 #popup {
- position:fixed; top:0; left:0; width:100%; height:100%;
- background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center;
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;
 }
 .popup-box {
- width:85%; background:#111; padding:25px; text-align:center;
- border-radius:15px; color:#fff; box-shadow:0 0 20px #d60000;
+  width:85%;background:#111;padding:25px;border-radius:15px;color:#fff;text-align:center;
+  box-shadow:0 0 20px #00d9ff;
 }
-.btn-join{
- width:100%; background:#d60000; border:none; padding:12px; border-radius:10px; font-size:18px;
- margin-bottom:10px; color:#fff;
+.btn-join {
+  width:100%;background:linear-gradient(90deg,#00d9ff,#8b2cff);
+  border:none;padding:12px;border-radius:10px;font-size:18px;margin-bottom:10px;
 }
-.btn-joined{
- width:100%; background:#222; border:none; padding:12px; border-radius:10px; font-size:18px; color:#fff;
+.btn-joined {
+  width:100%;background:#222;border:none;padding:12px;border-radius:10px;font-size:18px;
+}
+#video-box { display:none;height:100vh;background:black;position:relative; }
+video { width:100%;height:100%;background:black; }
+
+.settings-btn {
+  position:absolute; top:10px; right:10px;
+  background:#000; color:#fff; padding:8px 12px;
+  border-radius:8px; font-size:14px; z-index:10000; border:1px solid #fff;
 }
 
-#video-box{ display:none; height:100vh; background:black; position:relative; }
-video{ width:100%; height:100%; background:black; }
-
-#qualityBtn{
- position:absolute; bottom:65px; right:10px;
- background:rgba(0,0,0,0.7); padding:7px 12px; border-radius:6px;
- color:#fff; font-size:14px; cursor:pointer; z-index:1000;
+.quality-menu {
+  position:absolute; top:50px; right:10px; background:#000; color:#fff;
+  padding:10px; border-radius:8px; display:none; z-index:9999;
+  border:1px solid #555;
 }
-
-#qualityMenu{
- position:absolute; bottom:110px; right:10px;
- background:#000; color:#fff; padding:8px; border-radius:8px;
- display:none; z-index:999;
-}
-.quality-item{ padding:6px 12px; cursor:pointer; }
-.quality-item:hover{ background:#222; }
-
+.quality-item { padding:6px 12px; cursor:pointer; }
+.quality-item:hover { background:#222; }
 </style>
 </head>
 
 <body>
 
 <div id="popup">
- <div class="popup-box">
-  <h2>📣 Support Us!</h2>
-  <p>Join our Telegram channel <b>CRICKET YODDHA</b> for instant updates & links.</p>
-  <button class="btn-join" onclick="joinNow()">Join Now</button>
-  <button class="btn-joined" onclick="already()">Already Joined</button>
- </div>
+<div class="popup-box">
+<h2>📣 Join Our Telegram</h2>
+<p><b>CRICKET YODDHA</b> — Live Matches, Score, Links, Highlights</p>
+
+<button class="btn-join" onclick="joinNow()">Join Now ✅</button>
+<button class="btn-joined" onclick="already()">Already Joined ▶</button>
+</div>
 </div>
 
 <div id="video-box">
- <div id="qualityBtn">⚙ Quality</div>
- <div id="qualityMenu"></div>
- <video id="video" playsinline controls></video>
+<button class="settings-btn" onclick="toggleQualityMenu()">⚙ Quality</button>
+<div id="qualityMenu" class="quality-menu"></div>
+<video id="video" playsinline controls></video>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 
-// ✅ YOUR STREAM LINK HERE
-const stream = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+// ✅ Your Live Stream Link here
+const stream = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
-// ✅ SHOW QUALITY LIST
-function showQuality(levels, hls){
- const menu = document.getElementById("qualityMenu");
- menu.innerHTML = "";
-
- levels.forEach((lvl,i)=>{
-  let btn = document.createElement("div");
-  btn.className = "quality-item";
-  btn.textContent = lvl.height + "p";
-  btn.onclick = ()=>{hls.currentLevel=i; menu.style.display="none";};
-  menu.appendChild(btn);
- });
-
- let auto = document.createElement("div");
- auto.className="quality-item";
- auto.textContent="Auto ✅";
- auto.onclick=()=>{hls.currentLevel=-1; menu.style.display="none";};
- menu.appendChild(auto);
+// ✅ Quality menu toggle
+function toggleQualityMenu(){
+  const menu=document.getElementById("qualityMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-// ✅ PLAYER
-function initPlayer(){
- const v = document.getElementById("video");
- const btn = document.getElementById("qualityBtn");
- const menu = document.getElementById("qualityMenu");
+// ✅ Show Quality Options
+function showQualityMenu(levels, hls){
+  const menu=document.getElementById("qualityMenu");
+  menu.innerHTML="";
 
- if(Hls.isSupported()){
-  let hls = new Hls({ autoStartLoad:true });
-  hls.loadSource(stream);
-  hls.attachMedia(v);
-
-  // ✅ IMPORTANT FIX (quality show)
-  hls.on(Hls.Events.LEVEL_LOADED,()=> {
-     showQuality(hls.levels,hls);
+  levels.forEach((level,i)=>{
+    const q=document.createElement("div");
+    q.className="quality-item";
+    q.innerText = level.height+"p";
+    q.onclick = ()=>{
+      hls.currentLevel = i;
+      menu.style.display="none";
+    };
+    menu.appendChild(q);
   });
 
-  btn.onclick = () => {
-     menu.style.display = menu.style.display=="block"?"none":"block";
+  const auto=document.createElement("div");
+  auto.className="quality-item";
+  auto.innerText="Auto ✅";
+  auto.onclick=()=>{
+    hls.currentLevel = -1;
+    menu.style.display="none";
   };
- } else {
-  v.src = stream;
- }
+  menu.appendChild(auto);
 }
 
-// ✅ POPUP BTNS
+// ✅ Player Start
+function initPlayer(){
+  const v=document.getElementById("video");
+
+  if(Hls.isSupported()){
+    const hls=new Hls();
+    hls.loadSource(stream);
+    hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED,(event,data)=>{
+      showQualityMenu(data.levels,hls);
+    });
+  } else {
+    v.src = stream;
+  }
+}
+
+// ✅ Telegram actions
 function joinNow(){
- window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
+  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
 function already(){
- document.getElementById("popup").style.display="none";
- document.getElementById("video-box").style.display="block";
- initPlayer();
+  document.getElementById("popup").style.display="none";
+  document.getElementById("video-box").style.display="block";
+  initPlayer();
 }
 
 </script>
