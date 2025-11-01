@@ -1,132 +1,65 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live TV</title>
-<style>
-body { background:black; margin:0; font-family:Arial; color:white; }
+  <title>JW PLAYER</title>
 
-#popup {
-position:fixed; top:0; left:0; width:100%; height:100%;
-background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center;
-}
-.popup-box {
-width:85%; background:#111; padding:25px; text-align:center;
-border-radius:15px; color:#fff; box-shadow:0 0 20px #00d9ff;
-}
-.btn-join {
-width:100%; background:linear-gradient(90deg,#00d9ff,#8b2cff);
-border:none; padding:12px; border-radius:10px; font-size:18px; margin-bottom:10px;
-}
-.btn-joined {
-width:100%; background:#222; border:none; padding:12px; border-radius:10px; font-size:18px;
-}
-#video-box { display:none; position:relative; height:100vh; background:black; }
-video { width:100%; height:100%; background:black; }
+    <style>
+        body {
+            margin: 0px;
+        }
 
-/* Quality Button */
-#qualityBtn {
-position:absolute; top:10px; right:10px; z-index:999;
-background:#000; color:#fff; padding:8px 12px; border-radius:7px; cursor:pointer;
-}
+        .jwplayer {
+            position: absolute !important;
+        }
 
-/* Quality Menu */
-.quality-menu {
-position:absolute; top:50px; right:10px; background:#000;
-color:#fff; padding:10px; border-radius:8px; display:none; z-index:1000;
-}
-.quality-item { padding:6px 12px; cursor:pointer; }
-.quality-item:hover { background:#222; }
-</style>
-</head>
+        .jwplayer.jw-flag-aspect-mode {
+            min-height: 100%;
+            max-height: 100%;
+        }
+    </style>
 
-<body>
+    
 
-<div id="popup">
-<div class="popup-box">
-<h2>📣 Support Us</h2>
-<p>Join our Telegram for Streaming Links</p>
-<button class="btn-join" onclick="joinNow()">Join Now</button>
-<button class="btn-joined" onclick="already()">Already Joined</button>
-</div>
-</div>
+    <div id="jwplayerDiv"></div>
+    
 
-<div id="video-box">
-<button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
-<div id="qualityMenu" class="quality-menu"></div>
-<video id="video" playsinline controls></video>
-</div>
+ <script src="https://cdn.jsdelivr.net/npm/swarmcloud-jwplayer-hlsjs@0.1.1/dist/jwplayer.hlsjs.min.js"></script>
 
-<!-- DASH Player -->
-<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@swarmcloud/hls@latest/hls.min.js"></script>
+  <script src="https://ssl.p.jwpcdn.com/player/v/8.22.0/jwplayer.js"></script>
+    <script src="//ssl.p.jwpcdn.com/player/v/8.30.0/jwplayer.js"></script>
 
-<script>
+<script src="https://ssl.p.jwpcdn.com/player/v/8.33.2/jwplayer.js"></script>
 
-// ✅ MPD Stream Link
-const stream = "https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd";
+<script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
 
-function showQuality(levels, player){
-const menu = document.getElementById("qualityMenu");
-menu.innerHTML = "";
+<script src="https://cdn.jwplayer.com/libraries/SAHhwvZq.js"></script>
+     
+    <script type="text/javascript">
+        
+const queryParams = new URLSearchParams(window.location.search);
+        const mpdLink = queryParams.get('mpd');
+        const keyId = queryParams.get('keyId');
+        const key = queryParams.get('key');
 
-// Auto
-const auto = document.createElement("div");
-auto.className = "quality-item";
-auto.innerText = "Auto";
-auto.onclick = () => { 
-player.updateSettings({'streaming':{'abr':{'autoSwitchBitrate':{'video':true}}}});
-menu.style.display="none";
-};
-menu.appendChild(auto);
 
-levels.forEach((level, i)=>{
-const opt = document.createElement("div");
-opt.className="quality-item";
-opt.innerText = level.height + "p";
-opt.onclick = () => {
-player.setQualityFor("video", i);
-player.updateSettings({'streaming':{'abr':{'autoSwitchBitrate':{'video':false}}}});
-menu.style.display="none";
-};
-menu.appendChild(opt);
-});
-}
+        
 
-function toggleQuality(){
-let menu = document.getElementById("qualityMenu");
-menu.style.display = menu.style.display==="block" ? "none" : "block";
-}
-
-function initPlayer(){
-const video = document.getElementById("video");
-const player = dashjs.MediaPlayer().create();
-player.initialize(video, stream, true);
-
-// Disable auto for manual selection
-player.updateSettings({
-'streaming': {
-'abr': { 'autoSwitchBitrate': { 'video': false } }
-}
-});
-
-player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, ()=>{
-const levels = player.getBitrateInfoListFor("video");
-showQuality(levels, player);
-});
-}
-
-function joinNow(){
-window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
-}
-
-function already(){
-document.getElementById("popup").style.display="none";
-document.getElementById("video-box").style.display="block";
-initPlayer();
-}
-</script>
-
-</body>
-</html>
+     const player=jwplayer("jwplayerDiv").setup({
+            file: mpdLink,
+            position: 'bottom',
+            autostart: true,
+            stretching: "",
+            width: "100%",
+            type: "dash",
+   logo: {
+        file: 'https://blogger.googleusercontent.com/img/a/AVvXsEiQ92h-ekVYskxW9qCgLvpQVMpAs4tqUQXnH9nDi37JW5B95V7Cq2Rz_mlGO68vTZmA2H5Qp4p8B0I9EUlW-6W1aVOZgITWN3xyE65Hd6G5G_D6HJFxiuXJaK-wMfYD0PiiUR9EBodkzuPH0-ubAMJQK_3F3rpDMEIJKCxlEzNZucpRzsumlBFXWqinGOw=s885',
+        link:'https://t.me/tv4wap'
+    },
+            drm: {
+                clearkey: {
+                    keyId: keyId,
+                    key: key
+                }
+            }
+        });
+    </script>
