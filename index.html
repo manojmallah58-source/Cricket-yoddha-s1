@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +56,7 @@ body {
   cursor: pointer;
 }
 
-/* वीडियो बॉक्स */
+/* Video box */
 #video-box {
   display: none;
   position: relative;
@@ -75,7 +74,7 @@ iframe {
   border: 0;
 }
 
-/* लोडिंग स्क्रीन */
+/* Loading screen */
 #loading {
   position: absolute;
   top: 50%; left: 50%;
@@ -97,17 +96,19 @@ iframe {
 
 <body>
 
-<!-- पॉपअप -->
+<!-- Popup -->
 <div id="popup">
   <div class="popup-box">
-    <h2>📣 हमारा सपोर्ट करें</h2>
-    <p>Streaming Links के लिए हमारे Telegram चैनल से जुड़ें</p>
+    <h2>📣 Support Us!</h2>
+    <p>
+      Join our Telegram channel <b>CRICKET YODDHA</b> for instant updates, highlights, and exclusive links.
+    </p>
     <button class="btn-join" onclick="joinNow()">Join Now</button>
     <button class="btn-joined" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- वीडियो सेक्शन -->
+<!-- Video Section -->
 <div id="video-box">
   <div id="loading">⏳ Please Wait...<br>Loading Stream</div>
   <iframe id="iframe"
