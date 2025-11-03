@@ -19,41 +19,77 @@ body {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 }
 
 .popup-box {
   width: 85%;
+  max-width: 400px;
   background: #111;
-  padding: 25px;
+  padding: 25px 20px;
   text-align: center;
-  border-radius: 15px;
+  border-radius: 20px;
   color: #fff;
-  box-shadow: 0 0 20px #00d9ff;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+  border: 1px solid #ff0000;
 }
 
+/* Heading */
+.popup-box h2 {
+  color: #ffffff; /* White color for “Support Us!” */
+  font-size: 24px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Paragraph */
+.popup-box p {
+  color: #bfbfbf;
+  font-size: 16px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* Buttons */
 .btn-join {
   width: 100%;
-  background: linear-gradient(90deg,#00d9ff,#8b2cff);
+  background: #ff0000;
   border: none;
   padding: 12px;
   border-radius: 10px;
   font-size: 18px;
-  margin-bottom: 10px;
+  color: #fff;
+  font-weight: bold;
   cursor: pointer;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+
+.btn-join:hover {
+  background: #e60000;
 }
 
 .btn-joined {
   width: 100%;
   background: #222;
-  border: none;
+  border: 1px solid #444;
   padding: 12px;
   border-radius: 10px;
   font-size: 18px;
+  color: #fff;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-joined:hover {
+  background: #333;
 }
 
 /* Video box */
@@ -79,7 +115,7 @@ iframe {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  color: #00d9ff;
+  color: #ff0000;
   font-size: 20px;
   text-align: center;
   display: none;
@@ -101,7 +137,7 @@ iframe {
   <div class="popup-box">
     <h2>📣 Support Us!</h2>
     <p>
-      Join our Telegram channel <b>CRICKET YODDHA</b> for instant updates, highlights, and exclusive links.
+      Join our Telegram channel <b>Cricket Yodha</b> for instant updates, highlights, and exclusive links.
     </p>
     <button class="btn-join" onclick="joinNow()">Join Now</button>
     <button class="btn-joined" onclick="already()">Already Joined</button>
