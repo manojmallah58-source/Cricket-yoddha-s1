@@ -5,13 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Live TV</title>
 <style>
-body {
-  background: black;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: white;
-  width: 100%;
-  height: 100%;
+body { 
+  background: black; 
+  margin: 0; 
+  font-family: Arial, sans-serif; 
+  color: white; 
 }
 
 /* Popup */
@@ -40,7 +38,7 @@ body {
 
 /* Heading */
 .popup-box h2 {
-  color: #ffffff; /* White color for “Support Us!” */
+  color: #ffffff; /* White for Support Us */
   font-size: 24px;
   margin-bottom: 15px;
   display: flex;
@@ -93,39 +91,56 @@ body {
 }
 
 /* Video box */
-#video-box {
-  display: none;
-  position: relative;
-  height: 100vh;
-  background: black;
+#video-box { 
+  display: none; 
+  position: relative; 
+  height: 100vh; 
+  background: black; 
 }
 
-iframe {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #000;
-  position: absolute;
-  top: 0; left: 0;
-  border: 0;
+video { 
+  width: 100%; 
+  height: 100%; 
+  background: black; 
 }
 
-/* Loading screen */
-#loading {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  color: #ff0000;
-  font-size: 20px;
-  text-align: center;
-  display: none;
-  animation: blink 1.5s infinite;
+/* Quality Button */
+#qualityBtn {
+  position: absolute; 
+  top: 10px; 
+  right: 10px; 
+  z-index: 999;
+  background: #000; 
+  color: #fff; 
+  padding: 8px 12px; 
+  border-radius: 7px; 
+  cursor: pointer;
+  border: 1px solid #ff0000;
+  box-shadow: 0 0 10px rgba(255,0,0,0.5);
 }
 
-@keyframes blink {
-  0% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
+/* Quality Menu */
+.quality-menu {
+  position: absolute; 
+  top: 50px; 
+  right: 10px; 
+  background: #000; 
+  color: #fff; 
+  padding: 10px; 
+  border-radius: 8px; 
+  display: none; 
+  z-index: 1000;
+  border: 1px solid #ff0000;
+  box-shadow: 0 0 15px rgba(255,0,0,0.5);
+}
+
+.quality-item { 
+  padding: 6px 12px; 
+  cursor: pointer; 
+}
+
+.quality-item:hover { 
+  background: #222; 
 }
 </style>
 </head>
@@ -146,40 +161,67 @@ iframe {
 
 <!-- Video Section -->
 <div id="video-box">
-  <div id="loading">⏳ Please Wait...<br>Loading Stream</div>
-  <iframe id="iframe"
-    src=""
-    width="100%" height="100%"
-    frameborder="0"
-    webkitAllowFullScreen
-    mozallowfullscreen
-    allowfullscreen
-    allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-    loading="lazy">
-  </iframe>
+  <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
+  <div id="qualityMenu" class="quality-menu"></div>
+  <video id="video" playsinline controls></video>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
+
+// ✅ Your Stream Link (multi-quality)
+const stream = "https://smart.bengaldigital.live/AstroCricket/index.m3u8";
+
+function showQualityMenu(levels, hls) {
+  const menu = document.getElementById("qualityMenu");
+  menu.innerHTML = "";
+
+  levels.forEach((level, i) => {
+    const opt = document.createElement("div");
+    opt.className = "quality-item";
+    opt.innerText = level.height + "p";
+    opt.onclick = () => { 
+      hls.currentLevel = i; 
+      menu.style.display = "none"; 
+    };
+    menu.appendChild(opt);
+  });
+
+  // Auto Mode
+  const auto = document.createElement("div");
+  auto.className = "quality-item";
+  auto.innerText = "Auto";
+  auto.onclick = () => { hls.currentLevel = -1; menu.style.display = "none"; };
+  menu.appendChild(auto);
+}
+
+function toggleQuality(){
+  let menu = document.getElementById("qualityMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+function initPlayer(){
+  const v = document.getElementById("video");
+  if(Hls.isSupported()){
+    const hls = new Hls();
+    hls.loadSource(stream);
+    hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
+      showQualityMenu(data.levels, hls);
+    });
+  } else { 
+    v.src = stream; 
+  }
+}
+
 function joinNow(){
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
 
 function already(){
-  // Hide popup
-  document.getElementById("popup").style.display = "none";
-  // Show video box
-  document.getElementById("video-box").style.display = "block";
-  // Show loading
-  document.getElementById("loading").style.display = "block";
-
-  // Load iframe
-  const iframe = document.getElementById("iframe");
-  iframe.src = "https://tv4live.github.io/ID11?id=amzoneng1";
-
-  // When iframe loads, hide loading text
-  iframe.onload = function() {
-    document.getElementById("loading").style.display = "none";
-  };
+  document.getElementById("popup").style.display="none";
+  document.getElementById("video-box").style.display="block";
+  initPlayer();
 }
 </script>
 
