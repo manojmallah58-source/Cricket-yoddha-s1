@@ -3,183 +3,241 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live TV</title>
+<title>Cricket Yoddha Live</title>
 <style>
+/* ===== Base ===== */
 body {
-  background: black;
   margin: 0;
-  font-family: Arial, sans-serif;
-  color: white;
-  width: 100%;
-  height: 100%;
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at top, #002b4a 0%, #000c1a 100%);
+  color: #fff;
+  text-align: center;
+  overflow-x: hidden;
+  transition: opacity 0.5s ease-in-out;
 }
 
-/* Popup */
+/* ===== Header ===== */
+h1 {
+  background: #001a33;
+  color: #00bfff;
+  text-align: center;
+  padding: 16px 0;
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0;
+  box-shadow: 0 2px 10px rgba(0,170,255,0.3);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* ===== Popup Overlay ===== */
 #popup {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 10, 25, 0.97);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
+  z-index: 20;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 .popup-box {
-  width: 85%;
-  max-width: 400px;
-  background: #111;
-  padding: 25px 20px;
+  background: #002244;
+  border: 1px solid #00aaff;
+  box-shadow: 0 0 25px rgba(0,170,255,0.4);
+  border-radius: 15px;
+  width: 90%;
+  max-width: 380px;
+  padding: 25px;
   text-align: center;
-  border-radius: 20px;
-  color: #fff;
-  box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
-  border: 1px solid #ff0000;
+  transform: scale(0.9);
+  opacity: 0;
+  animation: zoomIn 0.5s ease forwards;
 }
 
-/* Heading */
 .popup-box h2 {
-  color: #ffffff; /* White color for “Support Us!” */
-  font-size: 24px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  font-size: 22px;
+  color: #00bfff;
+  margin-bottom: 10px;
 }
 
-/* Paragraph */
 .popup-box p {
-  color: #bfbfbf;
-  font-size: 16px;
+  color: #cde;
+  font-size: 15px;
   margin-bottom: 20px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-/* Buttons */
-.btn-join {
+/* ===== Popup Buttons ===== */
+.btn-join, .btn-joined {
   width: 100%;
-  background: #ff0000;
-  border: none;
   padding: 12px;
+  font-size: 17px;
   border-radius: 10px;
-  font-size: 18px;
-  color: #fff;
-  font-weight: bold;
+  border: none;
   cursor: pointer;
   margin-bottom: 10px;
+  font-weight: bold;
   transition: 0.3s;
 }
 
-.btn-join:hover {
-  background: #e60000;
+.btn-join {
+  background: linear-gradient(90deg, #00b4db, #0072ff);
+  color: #fff;
 }
+.btn-join:hover { opacity: 0.9; }
 
 .btn-joined {
-  width: 100%;
-  background: #222;
-  border: 1px solid #444;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 18px;
+  background: #001f3f;
+  border: 1px solid #004080;
   color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
 }
+.btn-joined:hover { background: #002a5c; }
 
-.btn-joined:hover {
-  background: #333;
-}
-
-/* Video box */
-#video-box {
-  display: none;
+/* ===== Video Box ===== */
+.video-wrapper {
   position: relative;
-  height: 100vh;
-  background: black;
+  margin: 90px auto 20px;
+  width: 92%;
+  max-width: 600px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 25px rgba(0,170,255,0.25);
+  display: none;
 }
 
 iframe {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #000;
-  position: absolute;
-  top: 0; left: 0;
-  border: 0;
+  height: 230px;
+  border: none;
+  display: block;
+  border-radius: 14px;
 }
 
-/* Loading screen */
-#loading {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  color: #ff0000;
-  font-size: 20px;
-  text-align: center;
-  display: none;
-  animation: blink 1.5s infinite;
+/* ===== Buttons Section ===== */
+.buttons-box {
+  background: rgba(0, 20, 40, 0.9);
+  border-radius: 12px;
+  padding: 18px;
+  width: 92%;
+  max-width: 500px;
+  margin: 15px auto;
+  box-shadow: 0 0 20px rgba(0,170,255,0.2);
 }
 
-@keyframes blink {
-  0% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
+.section-title {
+  color: #a8d8ff;
+  font-size: 15px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.btn-blue {
+  width: 100%;
+  background: linear-gradient(90deg, #00b4db, #0072ff);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.btn-blue:hover { opacity: 0.9; }
+
+/* ===== Back Link ===== */
+.back-link {
+  display: inline-block;
+  margin: 20px 0;
+  color: #99cfff;
+  font-size: 15px;
+  text-decoration: none;
+}
+.back-link:hover { color: #fff; }
+
+/* ===== Animations ===== */
+@keyframes zoomIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== Responsive ===== */
+@media (min-width: 700px) {
+  iframe { height: 340px; }
 }
 </style>
 </head>
-
 <body>
 
 <!-- Popup -->
 <div id="popup">
   <div class="popup-box">
-    <h2>📣 Support Us!</h2>
-    <p>
-      Join our Telegram channel <b>Cricket News</b> for instant updates, highlights, and exclusive links.
-    </p>
-    <button class="btn-join" onclick="joinNow()">Join Now</button>
+    <h2>📣 Support Cricket Yoddha 📣</h2>
+    <p>Join our Telegram channel for live updates, match links & highlights instantly.</p>
+    <button class="btn-join" onclick="joinNow()">Join Telegram</button>
     <button class="btn-joined" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- Video Section -->
-<div id="video-box">
-  <div id="loading">⏳ Please Wait...<br>Loading Stream</div>
-  <iframe id="iframe"
-    src=""
-    width="100%" height="100%"
-    frameborder="0"
-    webkitAllowFullScreen
-    mozallowfullscreen
-    allowfullscreen
-    allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-    loading="lazy">
-  </iframe>
+<!-- Header -->
+<h1>CRICKET YODDHA</h1>
+
+<!-- Video Player -->
+<div class="video-wrapper" id="video-box">
+  <iframe src="https://tv4live.github.io/ID11?id=amzoneng1"
+  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+  allowfullscreen></iframe>
 </div>
 
+<!-- Telegram Button Section -->
+<div class="buttons-box">
+  <div class="section-title">🔔 Follow us for Updates!</div>
+  <a href="https://t.me/+rwZKMV0-L8wyOTll" target="_blank">
+    <button class="btn-blue">Join Telegram Channel</button>
+  </a>
+</div>
+
+<!-- Share Button Section -->
+<div class="buttons-box">
+  <div class="section-title">🔗 Share This Page</div>
+  <button class="btn-blue" onclick="sharePage()">Copy & Share Page Link</button>
+</div>
+
+<!-- Back Link -->
+<a href="index.html" class="back-link">← Back to All Streams</a>
+
 <script>
-function joinNow(){
-  window.open("https://t.me/+DLokZBUvpktiMzc9","_blank");
+function joinNow() {
+  window.open("https://t.me/+rwZKMV0-L8wyOTll", "_blank");
 }
 
-function already(){
-  // Hide popup
+function already() {
   document.getElementById("popup").style.display = "none";
-  // Show video box
   document.getElementById("video-box").style.display = "block";
-  // Show loading
-  document.getElementById("loading").style.display = "block";
+}
 
-  // Load iframe
-  const iframe = document.getElementById("iframe");
-  iframe.src = "https://tvgo.neocities.org/APPTV/jspo?id=Star1%20Hindi%20HD";
-
-  // When iframe loads, hide loading text
-  iframe.onload = function() {
-    document.getElementById("loading").style.display = "none";
-  };
+function sharePage() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({
+      title: "Cricket Yoddha Live",
+      text: "Watch Live Cricket on Cricket Yoddha!",
+      url: url
+    });
+  } else {
+    navigator.clipboard.writeText(url);
+    alert("✅ Page link copied! Share it with your friends.");
+  }
 }
 </script>
 
