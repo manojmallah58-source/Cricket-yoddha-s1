@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,7 @@ body {
   font-family: "Poppins", Arial, sans-serif;
   color: #fff;
   text-align: center;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -25,6 +27,8 @@ body {
   justify-content: center;
   gap: 10px;
   box-shadow: 0 0 20px rgba(0,255,179,0.3);
+  position: relative;
+  z-index: 100;
 }
 .header-icon {
   width: 28px;
@@ -37,8 +41,11 @@ body {
 .video-container {
   position: relative;
   width: 100%;
-  height: 50vh;
+  height: 70vh;
   background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 iframe {
   width: 100%;
@@ -46,6 +53,27 @@ iframe {
   border: none;
   background-color: #000;
   position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* LIVE badge */
+.live-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: red;
+  color: #fff;
+  padding: 4px 10px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 6px;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 /* Sections */
@@ -173,7 +201,13 @@ iframe {
 
   <!-- Video Section -->
   <div class="video-container">
-    <iframe id="iframe" src="https://icctv.wapka.site/fox" width="100%" height="100%" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowfullscreen autoplay; encrypted-media; gyroscope; picture-in-picture" loading="lazy"></iframe>
+    <div class="live-badge">🔴 LIVE</div>
+    <iframe id="iframe" src="https://icctv.wapka.site/fox"
+      width="100%" height="100%"
+      frameborder="0"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      webkitAllowFullScreen mozallowfullscreen allowfullscreen
+      loading="lazy"></iframe>
   </div>
 
   <!-- Follow Section -->
