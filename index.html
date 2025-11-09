@@ -11,6 +11,7 @@ body {
   font-family: "Poppins", Arial, sans-serif;
   color: #fff;
   text-align: center;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -33,19 +34,21 @@ body {
   border-radius: 50%;
 }
 
-/* Video Box */
+/* Video Section */
 .video-container {
   position: relative;
   width: 100%;
-  height: 50vh;
+  height: 240px;
   background: #000;
+  overflow: hidden;
 }
 iframe {
+  position: absolute;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   border: none;
   background-color: #000;
-  position: absolute;
 }
 
 /* Sections */
@@ -86,7 +89,7 @@ iframe {
   transform: scale(1.03);
 }
 
-/* Modern Popup */
+/* Popup */
 #popup {
   position: fixed;
   top: 0; left: 0;
@@ -174,8 +177,6 @@ iframe {
   <!-- Video Section -->
   <div class="video-container">
     <iframe id="iframe" src="https://tvgo.neocities.org/APPTV/jspo?id=Star1%20Hindi%20HD"
-      width="100%" height="100%"
-      frameborder="0"
       allow="autoplay; encrypted-media; picture-in-picture"
       webkitAllowFullScreen mozallowfullscreen allowfullscreen
       loading="lazy"></iframe>
@@ -195,18 +196,18 @@ iframe {
 </div>
 
 <script>
-// 🔘 Telegram
+// Telegram
 function joinNow(){
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
 
-// 📺 Show Main Page
+// Hide popup, show page
 function already(){
   document.getElementById("popup").style.display = "none";
   document.getElementById("main-content").style.display = "block";
 }
 
-// 🔗 Share Function
+// Share Page
 function sharePage(){
   const shareData = {
     title: "CRICKET YODDHA Live",
