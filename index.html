@@ -1,10 +1,10 @@
-
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRICKET YODDHA - Live Cricket Stream</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.9.6/shaka-player.compiled.js"></script>
+
 <style>
 body {
   margin: 0;
@@ -14,6 +14,8 @@ body {
   text-align: center;
   overflow-x: hidden;
 }
+
+/* Header */
 .header {
   background: #061a12;
   color: #00ffb3;
@@ -32,51 +34,48 @@ body {
   border: 2px solid #00ffb3;
   border-radius: 50%;
 }
+
+/* VIDEO WRAPPER */
 .video-container {
   position: relative;
   width: 100%;
-  height: auto;
+  height: 240px;
   background: #000;
   overflow: hidden;
 }
-video {
-  width: 100%;
-  height: 240px;
-  background: #000;
-}
+
+/* QUALITY BUTTON */
 .quality-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,255,179,0.25);
   border: 1px solid #00ffb3;
   color: #00ffb3;
-  padding: 6px 10px;
-  border-radius: 8px;
+  padding: 6px 12px;
   font-size: 14px;
-  cursor: pointer;
-  z-index: 999;
-}
-.quality-list {
-  position: absolute;
-  top: 45px;
-  right: 10px;
-  background: #0a0a0a;
-  border: 1px solid #00ffb3;
   border-radius: 10px;
-  display: none;
-  flex-direction: column;
-  z-index: 999;
-}
-.quality-list button {
-  background: none;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
   cursor: pointer;
-  text-align: left;
+  backdrop-filter: blur(4px);
+  transition: 0.3s;
+  z-index: 50;
 }
+.quality-btn:hover {
+  background: rgba(0,255,179,0.45);
+  transform: scale(1.08);
+}
+
+/* iframe */
+iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: #000;
+}
+
+/* Sections */
 .section {
   margin: 20px auto;
   width: 90%;
@@ -86,6 +85,17 @@ video {
   padding: 20px;
   box-shadow: 0 0 25px rgba(0,255,179,0.2);
 }
+.section h3 {
+  font-size: 18px;
+  color: #00ffb3;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Buttons */
 .btn {
   display: block;
   width: 100%;
@@ -99,7 +109,11 @@ video {
   cursor: pointer;
   transition: 0.3s;
 }
-.btn:hover { transform: scale(1.03); }
+.btn:hover {
+  transform: scale(1.03);
+}
+
+/* Popup */
 #popup {
   position: fixed;
   top: 0; left: 0;
@@ -115,86 +129,134 @@ video {
   max-width: 380px;
   background: #0a0a0a;
   border-radius: 20px;
+  box-shadow: 0 0 25px rgba(0,255,179,0.4), 0 0 40px rgba(0,255,255,0.2);
   padding: 25px 20px;
   text-align: center;
   border: 1px solid rgba(0,255,179,0.5);
 }
+.popup-box h2 {
+  font-size: 24px;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.popup-box p {
+  color: #ccc;
+  font-size: 15px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.popup-btn {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 12px 0;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: 0.3s;
+}
+.popup-btn:first-child {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: #fff;
+}
+.popup-btn:last-child {
+  background: #1a1a1a;
+  border: 1px solid #00ffb3;
+  color: #fff;
+}
+.popup-btn:hover {
+  transform: scale(1.05);
+}
 </style>
 </head>
-<body><div id="popup">
+
+<body>
+
+<!-- POPUP -->
+<div id="popup">
   <div class="popup-box">
     <h2>💬 Support Us!</h2>
-    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong></p>
-    <button class="btn" onclick="joinNow()">Join Now</button>
-    <button class="btn" onclick="already()">Already Joined</button>
+    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for instant updates, highlights, and exclusive links.</p>
+    <button class="popup-btn" onclick="joinNow()">Join Now</button>
+    <button class="popup-btn" onclick="already()">Already Joined</button>
   </div>
-</div><div id="main-content" style="display:none;">  <div class="header">
+</div>
+
+<!-- MAIN PAGE -->
+<div id="main-content" style="display:none;">
+
+  <!-- HEADER -->
+  <div class="header">
     <div class="header-icon"></div>
     CRICKET YODDHA
-  </div>  <!-- VIDEO PLAYER -->  <div class="video-container">
-    <video id="video" autoplay muted playsinline></video><button class="quality-btn" onclick="toggleQuality()">Quality ⚙️</button>
-<div class="quality-list" id="qualityList"></div>
+  </div>
 
-  </div>  <div class="section">
+  <!-- VIDEO + QUALITY BUTTON -->
+  <div class="video-container">
+
+    <button class="quality-btn" onclick="changeQuality()">Quality</button>
+
+    <iframe id="iframe"
+      src=""
+      allow="autoplay; encrypted-media; picture-in-picture"
+      webkitAllowFullScreen mozallowfullscreen allowfullscreen
+      loading="eager">
+    </iframe>
+  </div>
+
+  <!-- FOLLOW SECTION -->
+  <div class="section">
     <h3>🔔 Follow Us for Updates</h3>
     <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
-  </div>  <div class="section">
+  </div>
+
+  <!-- SHARE SECTION -->
+  <div class="section">
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
   </div>
-</div><script>
-// Telegram
-function joinNow(){ window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank"); }
-function already(){ document.getElementById("popup").style.display = "none"; document.getElementById("main-content").style.display = "block"; }
-function sharePage(){ navigator.clipboard.writeText(window.location.href); alert("Link Copied!"); }
-function toggleQuality(){ const q=document.getElementById("qualityList"); q.style.display=q.style.display==="flex"?"none":"flex"; }
+</div>
 
-// SHAKA PLAYER INITIALIZATION
-async function initPlayer(){
-  const video = document.getElementById('video');
-  const player = new shaka.Player(video);
 
-  window.player = player;
-
-  player.configure({ streaming: { bufferingGoal: 2, rebufferingGoal: 1 } });
-
-  player.configure({ drm: { clearKeys: { '2f5ed0dd0a0ca671dee3948dbbe023d4':'7039b2570d5d429c7f4a7a4058ba5135' } }});
-
-  player.addEventListener('error', e => console.error('Error:', e));
-
-  await player.load('https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd');
-
-  console.log('Video Loaded');
-
-  buildQualityMenu();
+<script>
+// Open Telegram
+function joinNow(){
+  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
 
-function buildQualityMenu(){
-  const tracks = player.getVariantTracks();
-  const qList = document.getElementById('qualityList');
-  qList.innerHTML = '';
+// Show main page
+function already(){
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("main-content").style.display = "block";
 
-  tracks.forEach(t => {
-    const btn = document.createElement('button');
-    btn.textContent = t.height + 'p';
-    btn.onclick = () => {
-      player.configure({ abr: { enabled: false }});
-      player.selectVariantTrack(t, true);
-      qList.style.display = 'none';
-    };
-    qList.appendChild(btn);
-  });
+  // FAST LOAD STREAM
+  document.getElementById("iframe").src =
+    "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd?|drmScheme=clearkey&drmLicense=2f5ed0dd0a0ca671dee3948dbbe023d4:7039b2570d5d429c7f4a7a4058ba5135";
+}
 
-  const autoBtn = document.createElement('button');
-  autoBtn.textContent = 'Auto';
-  autoBtn.onclick = () => {
-    player.configure({ abr: { enabled: true }});
-    qList.style.display = 'none';
+// Quality Change Popup
+function changeQuality(){
+  alert("Available Qualities:\n\n• Auto\n• 1080p\n• 720p\n• 480p\n• 360p\n\n⚠️ Quality depends on stream provider.");
+}
+
+// Share page
+function sharePage(){
+  const shareData = {
+    title: "CRICKET YODDHA Live",
+    text: "Watch Live Cricket on CRICKET YODDHA!",
+    url: window.location.href
   };
-  qList.appendChild(autoBtn);
-}
 
-shaka.polyfill.installAll();
-initPlayer();
-</script></body>
+  if (navigator.share) navigator.share(shareData);
+  else {
+    navigator.clipboard.writeText(window.location.href);
+    alert("✅ Link copied!");
+  }
+}
+</script>
+
+</body>
 </html>
