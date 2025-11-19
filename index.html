@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRICKET YODDHA - Live Cricket Stream</title>
 
-<!-- SHAKA PLAYER -->
+<!-- Shaka Player -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
 
 <style>
@@ -30,7 +30,9 @@ body {
   justify-content: center;
   gap: 10px;
   box-shadow: 0 0 20px rgba(0,255,179,0.3);
+  position: relative;
 }
+
 .header-icon {
   width: 28px;
   height: 28px;
@@ -38,34 +40,60 @@ body {
   border-radius: 50%;
 }
 
+/* QUALITY BUTTON */
+.quality-btn {
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  padding: 8px 14px;
+  background: #000;
+  border: 2px solid #00ffb3;
+  color: #00ffb3;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0,255,179,0.5);
+  cursor: pointer;
+}
+
 /* Video Section */
 .video-container {
   width: 100%;
-  padding: 10px 0 0;
+  height: 240px;
   background: #000;
-}
-video {
-  width: 95%;
-  max-width: 720px;
-  background: #000;
-  border: 2px solid #00ffb3;
-  border-radius: 12px;
+  position: relative;
 }
 
-/* Quality Select */
-.quality-wrap {
-  margin: 10px auto 0;
+video {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  object-fit: cover;
 }
-#qualitySelect {
-  padding: 10px;
-  width: 90%;
-  max-width: 320px;
-  background: #061a12;
+
+/* Quality Menu Pop */
+#qualityMenu {
+  position: absolute;
+  right: 10px;
+  top: 55px;
+  background: #0a0a0a;
   border: 1px solid #00ffb3;
-  color: #00ffb3;
   border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 10px;
+  display: none;
+  z-index: 999;
+}
+#qualityMenu button {
+  background: none;
+  border: none;
+  color: #00ffb3;
+  padding: 6px 8px;
+  width: 100%;
+  font-size: 14px;
+  cursor: pointer;
+}
+#qualityMenu button:hover {
+  background: #022b20;
 }
 
 /* Sections */
@@ -82,15 +110,10 @@ video {
   font-size: 18px;
   color: #00ffb3;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 }
 
 /* Buttons */
 .btn {
-  display: block;
   width: 100%;
   padding: 12px;
   border: none;
@@ -109,49 +132,36 @@ video {
 /* Popup */
 #popup {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9999;
 }
 .popup-box {
   width: 85%;
   max-width: 380px;
   background: #0a0a0a;
   border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0,255,179,0.4), 0 0 40px rgba(0,255,255,0.2);
   padding: 25px 20px;
+  border: 1px solid #00ffb3;
   text-align: center;
-  border: 1px solid rgba(0,255,179,0.5);
 }
-.popup-box h2 {
-  font-size: 24px;
-  color: #fff;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.popup-box p {
-  color: #ccc;
-  font-size: 15px;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
+
 .popup-btn {
-  display: block;
   width: 100%;
   border: none;
   border-radius: 10px;
+  margin-bottom: 12px;
+  padding: 12px 0;
   font-size: 17px;
   font-weight: bold;
-  padding: 12px 0;
   cursor: pointer;
-  margin-bottom: 12px;
-  transition: 0.3s;
 }
 .popup-btn:first-child {
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  background: linear-gradient(90deg,#00c6ff,#0072ff);
   color: #fff;
 }
 .popup-btn:last-child {
@@ -159,51 +169,42 @@ video {
   border: 1px solid #00ffb3;
   color: #fff;
 }
-.popup-btn:hover {
-  transform: scale(1.05);
-}
 </style>
 </head>
 
 <body>
 
-<!-- Popup -->
+<!-- POPUP -->
 <div id="popup">
   <div class="popup-box">
     <h2>💬 Support Us!</h2>
-    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for instant updates, highlights, and exclusive links.</p>
+    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for updates.</p>
     <button class="popup-btn" onclick="joinNow()">Join Now</button>
     <button class="popup-btn" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- Main Page -->
+<!-- MAIN CONTENT -->
 <div id="main-content" style="display:none;">
 
-  <!-- Header -->
   <div class="header">
     <div class="header-icon"></div>
     CRICKET YODDHA
+    <button class="quality-btn" onclick="toggleQuality()">⚙ Quality</button>
   </div>
 
-  <!-- Video Player -->
   <div class="video-container">
-    <video id="video" playsinline controls muted></video>
+    <video id="video" controls autoplay></video>
 
-    <div class="quality-wrap">
-      <select id="qualitySelect" disabled>
-        <option>Loading qualities...</option>
-      </select>
-    </div>
+    <!-- Quality Menu -->
+    <div id="qualityMenu"></div>
   </div>
 
-  <!-- Follow Section -->
   <div class="section">
     <h3>🔔 Follow Us for Updates</h3>
     <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
   </div>
 
-  <!-- Share Section -->
   <div class="section">
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
@@ -211,145 +212,66 @@ video {
 </div>
 
 <script>
-// Telegram
-function joinNow(){
-  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
-}
-
-// Hide popup, show page
+function joinNow(){ window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank"); }
 function already(){
-  document.getElementById("popup").style.display = "none";
-  document.getElementById("main-content").style.display = "block";
+  document.getElementById("popup").style.display="none";
+  document.getElementById("main-content").style.display="block";
 }
-
-// Share Page
 function sharePage(){
-  const shareData = {
-    title: "CRICKET YODDHA Live",
-    text: "Watch Live Cricket on CRICKET YODDHA!",
-    url: window.location.href
-  };
-
-  if (navigator.share) {
-    navigator.share(shareData)
-      .catch(() => {});
-  } else {
-    navigator.clipboard.writeText(window.location.href);
-    alert("✅ Link copied! Share it manually.");
-  }
+  navigator.clipboard.writeText(window.location.href);
+  alert("✅ Link Copied!");
 }
 
-// =====================
-// SHAKA PLAYER SETUP
-// =====================
-
-// MPD + ClearKey
-const manifestUri =
-  "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
-
-const drmKeys = {
-  "2f5ed0dd0a0ca671dee3948dbbe023d4": "7039b2570d5d429c7f4a7a4058ba5135"
-};
-
-async function initPlayer() {
-  // Check support
-  if (!shaka.Player.isBrowserSupported()) {
-    alert("Your browser does not support the player.");
-    return;
-  }
-
-  const video = document.getElementById("video");
-  const qualitySelect = document.getElementById("qualitySelect");
-
+/* ===============================
+   SHAKA PLAYER INITIALIZATION
+================================*/
+async function initPlayer(){
+  const video = document.getElementById('video');
   const player = new shaka.Player(video);
 
-  // Basic config
+  // DRM Keys
   player.configure({
     drm: {
-      clearKeys: drmKeys
-    },
-    streaming: {
-      bufferingGoal: 15, // faster start
-      rebufferingGoal: 5
-    },
-    abr: {
-      enabled: true
+      clearKeys: {
+        "2f5ed0dd0a0ca671dee3948dbbe023d4":
+        "7039b2570d5d429c7f4a7a4058ba5135"
+      }
     }
   });
 
-  // Error handle
-  player.addEventListener("error", (e) => {
-    console.error("Shaka Error", e.detail);
-    alert("Playback error, please refresh page.");
-  });
+  const mpd = "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
 
   try {
-    await player.load(manifestUri);
-    console.log("✅ Stream loaded");
+    await player.load(mpd);
 
-    // Try autoplay
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // If blocked by browser, user can press play
-        console.warn("Autoplay blocked, user interaction needed.");
-      });
-    }
+    // QUALITY MENU
+    const tracks = player.getVariantTracks();
+    const menu = document.getElementById("qualityMenu");
+    menu.innerHTML = "";
 
-    // Fill quality options
-    const tracks = player.getVariantTracks().filter(t => t.height); // ignore audio only
-    // Clear first
-    qualitySelect.innerHTML = "";
-
-    // Auto Option
-    const autoOption = document.createElement("option");
-    autoOption.value = "auto";
-    autoOption.textContent = "Auto Quality";
-    qualitySelect.appendChild(autoOption);
-
-    // Unique heights
-    const added = new Set();
-    tracks.forEach(track => {
-      if (!added.has(track.height)) {
-        added.add(track.height);
-        const opt = document.createElement("option");
-        opt.value = track.height;
-        opt.textContent = track.height + "p";
-        qualitySelect.appendChild(opt);
-      }
-    });
-
-    qualitySelect.disabled = false;
-
-    // On change quality
-    qualitySelect.addEventListener("change", () => {
-      const val = qualitySelect.value;
-
-      if (val === "auto") {
-        player.configure({ abr: { enabled: true } });
-      } else {
+    tracks.forEach(t => {
+      let btn = document.createElement("button");
+      btn.innerText = t.height + "p";
+      btn.onclick = () => {
         player.configure({ abr: { enabled: false } });
-
-        // select all tracks that match that height (for both audio langs if any)
-        const allTracks = player.getVariantTracks();
-        const match = allTracks.filter(t => t.height == val);
-
-        if (match.length) {
-          // choose first match
-          player.selectVariantTrack(match[0], /* clearBuffer */ true);
-        }
-      }
+        player.selectVariantTrack(t, true);
+        menu.style.display="none";
+      };
+      menu.appendChild(btn);
     });
 
-  } catch (error) {
-    console.error("Load failed", error);
-    alert("Could not load stream. Please check link or try again.");
+  } catch (e){
+    console.error("Error loading video", e);
   }
 }
+shaka.polyfill.installAll();
+initPlayer();
 
-// Init when page ready
-document.addEventListener("DOMContentLoaded", initPlayer);
+/* QUALITY MENU SHOW/HIDE */
+function toggleQuality(){
+  let q = document.getElementById("qualityMenu");
+  q.style.display = q.style.display === "block" ? "none" : "block";
+}
 </script>
-
 </body>
 </html>
