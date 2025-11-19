@@ -15,7 +15,6 @@ body {
   font-family: "Poppins", Arial, sans-serif;
   color: #fff;
   text-align: center;
-  overflow-x: hidden;
 }
 
 /* Header */
@@ -31,6 +30,7 @@ body {
   gap: 10px;
   box-shadow: 0 0 20px rgba(0,255,179,0.3);
   position: relative;
+  z-index: 5;
 }
 
 .header-icon {
@@ -40,17 +40,13 @@ body {
   border-radius: 50%;
 }
 
-/* Video Section */
+/* Video Section Full Screen */
 .video-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 20px auto;
   position: relative;
+  width: 100%;
+  height: 100vh; /* full screen height */
   background: #000;
-  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 0 25px rgba(0,255,179,0.2);
-  height: 45vh; /* responsive height */
 }
 
 video {
@@ -62,8 +58,8 @@ video {
 /* QUALITY BUTTON */
 .quality-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 20px;
+  right: 20px;
   padding: 8px 14px;
   background: rgba(0,0,0,0.7);
   border: 2px solid #00ffb3;
@@ -75,11 +71,11 @@ video {
   z-index: 10;
 }
 
-/* Quality Menu */
+/* QUALITY MENU */
 #qualityMenu {
   position: absolute;
-  top: 50px;
-  right: 10px;
+  top: 60px;
+  right: 20px;
   background: #0a0a0a;
   border: 1px solid #00ffb3;
   border-radius: 8px;
@@ -101,7 +97,7 @@ video {
   background: #022b20;
 }
 
-/* Sections */
+/* Sections Below Video */
 .section {
   margin: 20px auto;
   width: 90%;
