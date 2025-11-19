@@ -4,17 +4,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support Us</title>
+<title>Live Stream</title>
 
 <style>
     body {
         margin: 0;
-        background: black;
-        color: white;
+        background: #000;
+        color: #fff;
         font-family: Arial, sans-serif;
     }
 
-    /* Popup Background */
+    /* Popup BG */
     #telegramPopup {
         position: fixed;
         top: 0; left: 0;
@@ -31,81 +31,86 @@
         background: #111;
         padding: 22px;
         width: 90%;
-        max-width: 340px;
+        max-width: 350px;
         border-radius: 14px;
         text-align: center;
         border: 2px solid red;
     }
 
-    .popup-content h2 {
-        margin: 0 0 8px 0;
-        font-size: 24px;
-    }
-
-    .popup-content p {
-        font-size: 16px;
-        opacity: 0.9;
-        margin-bottom: 20px;
-    }
-
-    .join-btn {
-        width: 100%;
-        padding: 12px;
-        margin-top: 10px;
-        background: red;
-        color: white;
-        font-size: 18px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-    }
-
-    .already-btn {
+    .join-btn, .already-btn {
         width: 100%;
         padding: 12px;
         margin-top: 12px;
-        background: #333;
-        color: white;
         font-size: 18px;
         border: none;
         border-radius: 10px;
         cursor: pointer;
+    }
+
+    .join-btn { background: red; color: white; }
+    .already-btn { background: #333; color: white; }
+
+    /* M3U Content Area */
+    #contentBox {
+        padding: 15px;
+        white-space: pre-wrap;
+        font-size: 15px;
+        line-height: 1.5;
+        display: none;
     }
 </style>
 </head>
 
 <body>
 
-<!-- POPUP START -->
+<!-- POPUP -->
 <div id="telegramPopup">
     <div class="popup-content">
         <h2>📣 Support Us!</h2>
         <p>Join our Telegram channel <b>Cricket Yodha</b> for instant updates, highlights, and exclusive links.</p>
 
         <button class="join-btn" onclick="joinTelegram()">Join Now</button>
-        <button class="already-btn" onclick="openStream()">Already Joined</button>
+        <button class="already-btn" onclick="openContent()">Already Joined</button>
     </div>
 </div>
-<!-- POPUP END -->
+
+<!-- WHERE M3U WILL SHOW -->
+<div id="contentBox"></div>
 
 <script>
+// 👉 JOIN BUTTON
 function joinTelegram() {
-    // 👉 अपनी Telegram चैनल लिंक यहाँ डालें
-    window.location.href = "https://t.me/+rwZKMV0-L8wyOTll";
-
-    // Joined remember
+    window.location.href = "https://t.me/CricketYodha";
     localStorage.setItem("joinedTelegram", "yes");
 }
 
-function openStream() {
-    // 👉 आपका दिया हुआ stream link
-    window.location.href = "https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.m3u";
+// 👉 ALREADY JOINED BUTTON → LOAD CONTENT
+function openContent() {
+    document.getElementById("telegramPopup").style.display = "none";
+    loadM3U();
+    localStorage.setItem("joinedTelegram", "yes");
 }
 
-// Popup hide logic
-window.onload = function() {
+// 👉 LOAD M3U DATA DIRECTLY ON PAGE
+function loadM3U() {
+    const url = "https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.m3u";
+
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("contentBox").style.display = "block";
+            document.getElementById("contentBox").textContent = data;
+        })
+        .catch(err => {
+            document.getElementById("contentBox").textContent = "Error loading content!";
+        });
+}
+
+// 👉 AUTO HIDE POPUP IF ALREADY JOINED
+window.onload = function () {
     if (localStorage.getItem("joinedTelegram") === "yes") {
         document.getElementById("telegramPopup").style.display = "none";
+        loadM3U();
     }
 };
 </script>
