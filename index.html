@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRICKET YODDHA - Live Cricket Stream</title>
-
 <style>
 body {
   margin: 0;
@@ -35,7 +34,7 @@ body {
   border-radius: 50%;
 }
 
-/* VIDEO WRAPPER */
+/* Video Section */
 .video-container {
   position: relative;
   width: 100%;
@@ -43,29 +42,6 @@ body {
   background: #000;
   overflow: hidden;
 }
-
-/* QUALITY BUTTON */
-.quality-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0,255,179,0.25);
-  border: 1px solid #00ffb3;
-  color: #00ffb3;
-  padding: 6px 12px;
-  font-size: 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: 0.3s;
-  z-index: 50;
-}
-.quality-btn:hover {
-  background: rgba(0,255,179,0.45);
-  transform: scale(1.08);
-}
-
-/* iframe */
 iframe {
   position: absolute;
   top: 0; left: 0;
@@ -175,7 +151,7 @@ iframe {
 
 <body>
 
-<!-- POPUP -->
+<!-- Popup -->
 <div id="popup">
   <div class="popup-box">
     <h2>💬 Support Us!</h2>
@@ -185,20 +161,17 @@ iframe {
   </div>
 </div>
 
-<!-- MAIN PAGE -->
+<!-- Main Page -->
 <div id="main-content" style="display:none;">
 
-  <!-- HEADER -->
+  <!-- Header -->
   <div class="header">
     <div class="header-icon"></div>
     CRICKET YODDHA
   </div>
 
-  <!-- VIDEO + QUALITY BUTTON -->
+  <!-- Video Section -->
   <div class="video-container">
-
-    <button class="quality-btn" onclick="changeQuality()">Quality</button>
-
     <iframe id="iframe"
       src=""
       allow="autoplay; encrypted-media; picture-in-picture"
@@ -207,42 +180,36 @@ iframe {
     </iframe>
   </div>
 
-  <!-- FOLLOW SECTION -->
+  <!-- Follow Section -->
   <div class="section">
     <h3>🔔 Follow Us for Updates</h3>
     <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
   </div>
 
-  <!-- SHARE SECTION -->
+  <!-- Share Section -->
   <div class="section">
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
   </div>
 </div>
 
-
 <script>
-// Open Telegram
+// Telegram
 function joinNow(){
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
 
-// Show main page
+// Hide popup + Load Video
 function already(){
   document.getElementById("popup").style.display = "none";
   document.getElementById("main-content").style.display = "block";
 
-  // FAST LOAD STREAM
+  // Your MPD + DRM Link Loaded Here
   document.getElementById("iframe").src =
     "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd?|drmScheme=clearkey&drmLicense=2f5ed0dd0a0ca671dee3948dbbe023d4:7039b2570d5d429c7f4a7a4058ba5135";
 }
 
-// Quality Change Popup
-function changeQuality(){
-  alert("Available Qualities:\n\n• Auto\n• 1080p\n• 720p\n• 480p\n• 360p\n\n⚠️ Quality depends on stream provider.");
-}
-
-// Share page
+// Share Page
 function sharePage(){
   const shareData = {
     title: "CRICKET YODDHA Live",
@@ -250,8 +217,9 @@ function sharePage(){
     url: window.location.href
   };
 
-  if (navigator.share) navigator.share(shareData);
-  else {
+  if (navigator.share) {
+    navigator.share(shareData);
+  } else {
     navigator.clipboard.writeText(window.location.href);
     alert("✅ Link copied!");
   }
