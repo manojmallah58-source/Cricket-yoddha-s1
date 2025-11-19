@@ -12,12 +12,13 @@
 body {
   margin: 0;
   background: #000;
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
   color: #fff;
   text-align: center;
+  overflow-x: hidden;
 }
 
-/* ---------------- HEADER ---------------- */
+/* HEADER */
 .header {
   background: #061a12;
   color: #00ffb3;
@@ -27,49 +28,50 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
+  box-shadow: 0 0 20px rgba(0,255,179,0.3);
   position: relative;
-  box-shadow: 0 0 25px rgba(0,255,179,0.3);
 }
 
 .header-icon {
   width: 28px;
   height: 28px;
-  border: 3px solid #00ffb3;
+  border: 2px solid #00ffb3;
   border-radius: 50%;
-  box-shadow: 0 0 15px #00ffb3;
 }
 
-/* Quality Button */
+/* QUALITY BUTTON */
 .quality-btn {
   position: absolute;
   right: 15px;
   top: 12px;
-  padding: 8px 16px;
-  background: transparent;
+  padding: 8px 14px;
+  background: #000;
   border: 2px solid #00ffb3;
   color: #00ffb3;
   border-radius: 12px;
   font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0,255,179,0.5);
   cursor: pointer;
-  box-shadow: 0 0 12px rgba(0,255,179,0.7);
 }
 
-/* ---------------- VIDEO ---------------- */
+/* VIDEO BOX */
 .video-container {
   width: 100%;
-  height: 240px;
+  height: 230px;
   background: #000;
   position: relative;
+  margin-top: 10px;
 }
 
 video {
   width: 100%;
   height: 100%;
-  background: #000;
-  object-fit: cover;
+  object-fit: contain;
 }
 
+/* Quality Menu */
 #qualityMenu {
   position: absolute;
   right: 10px;
@@ -81,22 +83,20 @@ video {
   display: none;
   z-index: 999;
 }
-
 #qualityMenu button {
   background: none;
   border: none;
   color: #00ffb3;
   padding: 6px 8px;
   width: 100%;
-  cursor: pointer;
   font-size: 14px;
+  cursor: pointer;
 }
-
 #qualityMenu button:hover {
   background: #022b20;
 }
 
-/* ---------------- SECTIONS ---------------- */
+/* SECTION */
 .section {
   margin: 20px auto;
   width: 90%;
@@ -110,83 +110,82 @@ video {
 .section h3 {
   font-size: 18px;
   color: #00ffb3;
+  margin-bottom: 10px;
 }
 
-/* Buttons */
+/* BUTTON */
 .btn {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   border: none;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #00ffb3, #0099ff);
-  color: white;
+  border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
-  box-shadow: 0 0 12px rgba(0,255,179,0.3);
+  color: #fff;
+  background: linear-gradient(90deg, #00ffb3, #0099ff);
   cursor: pointer;
-  transition: .3s;
+  transition: 0.3s;
 }
-
 .btn:hover {
   transform: scale(1.03);
 }
 
-/* ---------------- POPUP ---------------- */
+/* POPUP */
 #popup {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
-
 .popup-box {
   width: 85%;
-  max-width: 360px;
+  max-width: 380px;
   background: #0a0a0a;
   border-radius: 20px;
-  padding: 25px;
+  padding: 25px 20px;
   border: 1px solid #00ffb3;
+  text-align: center;
 }
 
 .popup-btn {
   width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  margin-top: 12px;
-  font-size: 16px;
-  font-weight: bold;
   border: none;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  padding: 12px 0;
+  font-size: 17px;
+  font-weight: bold;
   cursor: pointer;
 }
-
 .popup-btn:first-child {
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-  color: white;
+  background: linear-gradient(90deg,#00c6ff,#0072ff);
+  color: #fff;
 }
-
 .popup-btn:last-child {
-  background: #111;
+  background: #1a1a1a;
   border: 1px solid #00ffb3;
-  color: #00ffb3;
+  color: #fff;
 }
 </style>
 </head>
+
 <body>
 
-<!-- ---------------- POPUP ---------------- -->
+<!-- POPUP -->
 <div id="popup">
   <div class="popup-box">
-    <h2 style="color:#00ffb3;">💬 Support Us</h2>
-    <p>Join our Telegram Channel <b style="color:#00ffb3;">CRICKET YODDHA</b></p>
+    <h2>💬 Support Us!</h2>
+    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for updates.</p>
     <button class="popup-btn" onclick="joinNow()">Join Now</button>
     <button class="popup-btn" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- ---------------- MAIN CONTENT ---------------- -->
+<!-- MAIN CONTENT -->
 <div id="main-content" style="display:none;">
 
   <div class="header">
@@ -195,16 +194,19 @@ video {
     <button class="quality-btn" onclick="toggleQuality()">⚙ Quality</button>
   </div>
 
+  <!-- VIDEO -->
   <div class="video-container">
     <video id="video" controls autoplay></video>
     <div id="qualityMenu"></div>
   </div>
 
+  <!-- TELEGRAM -->
   <div class="section">
     <h3>🔔 Follow Us for Updates</h3>
     <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
   </div>
 
+  <!-- SHARE -->
   <div class="section">
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
@@ -213,21 +215,21 @@ video {
 </div>
 
 <script>
-function joinNow(){ window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank"); }
-
-function already(){
+function joinNow() {
+  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
+}
+function already() {
   document.getElementById("popup").style.display="none";
   document.getElementById("main-content").style.display="block";
 }
-
-function sharePage(){
+function sharePage() {
   navigator.clipboard.writeText(window.location.href);
   alert("✅ Link Copied!");
 }
 
-/* ------------ SHAKA PLAYER ------------ */
+/* SHAKA PLAYER */
 async function initPlayer(){
-  const video = document.getElementById("video");
+  const video = document.getElementById('video');
   const player = new shaka.Player(video);
 
   player.configure({
@@ -246,24 +248,23 @@ async function initPlayer(){
 
     const tracks = player.getVariantTracks();
     const menu = document.getElementById("qualityMenu");
-    menu.innerHTML = "";
 
+    menu.innerHTML = "";
     tracks.forEach(t => {
       let btn = document.createElement("button");
       btn.innerText = t.height + "p";
       btn.onclick = () => {
-        player.configure({ abr: { enabled: false }});
+        player.configure({ abr: { enabled: false } });
         player.selectVariantTrack(t, true);
-        menu.style.display = "none";
+        menu.style.display="none";
       };
       menu.appendChild(btn);
     });
 
-  } catch (e){
-    console.error("Video Error:", e);
+  } catch (e) {
+    console.error("Error loading video", e);
   }
 }
-
 shaka.polyfill.installAll();
 initPlayer();
 
