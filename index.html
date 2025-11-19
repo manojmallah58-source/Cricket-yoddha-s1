@@ -13,7 +13,7 @@
         font-family: Arial, sans-serif;
     }
 
-    /* Popup BG */
+    /* POPUP OVERLAY */
     #telegramPopup {
         position: fixed;
         top: 0; left: 0;
@@ -25,7 +25,7 @@
         z-index: 9999;
     }
 
-    /* Popup Box */
+    /* POPUP BOX */
     .popup-content {
         background: #111;
         padding: 22px;
@@ -49,69 +49,65 @@
     .join-btn { background: red; color: white; }
     .already-btn { background: #333; color: white; }
 
-    /* M3U Content Area */
-    #contentBox {
+    /* M3U CONTENT SECTION */
+    #m3uContent {
         padding: 15px;
         white-space: pre-wrap;
         font-size: 15px;
         line-height: 1.5;
-        display: none;
+        display: none; /* start hidden */
     }
 </style>
 </head>
 
 <body>
 
-<!-- POPUP -->
+<!-- POPUP FIRST -->
 <div id="telegramPopup">
     <div class="popup-content">
         <h2>📣 Support Us!</h2>
         <p>Join our Telegram channel <b>Cricket Yodha</b> for instant updates, highlights, and exclusive links.</p>
 
         <button class="join-btn" onclick="joinTelegram()">Join Now</button>
-        <button class="already-btn" onclick="openContent()">Already Joined</button>
+        <button class="already-btn" onclick="showContent()">Already Joined</button>
     </div>
 </div>
 
-<!-- WHERE M3U WILL SHOW -->
-<div id="contentBox"></div>
+<!-- WHERE M3U WILL BE SHOWN -->
+<div id="m3uContent"></div>
 
 <script>
-// 👉 JOIN BUTTON
 function joinTelegram() {
-    window.location.href = "https://t.me/CricketYodha";
-    localStorage.setItem("joinedTelegram", "yes");
+    window.location.href = "https://t.me/CricketYodha"; // अपना चैनल लिंक डालें
+    closePopup();
 }
 
-// 👉 ALREADY JOINED BUTTON → LOAD CONTENT
-function openContent() {
+function showContent() {
+    closePopup();
+}
+
+// Close popup & load m3u
+function closePopup() {
     document.getElementById("telegramPopup").style.display = "none";
-    loadM3U();
-    localStorage.setItem("joinedTelegram", "yes");
+    loadM3UFile();
 }
 
-// 👉 LOAD M3U DATA DIRECTLY ON PAGE
-function loadM3U() {
-    const url = "https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.m3u";
+// Load the M3U file content
+function loadM3UFile() {
+    const fileURL = "https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.m3u";
 
-    fetch(url)
-        .then(response => response.text())
+    fetch(fileURL)
+        .then(res => res.text())
         .then(data => {
-            document.getElementById("contentBox").style.display = "block";
-            document.getElementById("contentBox").textContent = data;
+            document.getElementById("m3uContent").style.display = "block";
+            document.getElementById("m3uContent").textContent = data;
         })
-        .catch(err => {
-            document.getElementById("contentBox").textContent = "Error loading content!";
+        .catch(error => {
+            document.getElementById("m3uContent").textContent = "Error loading content!";
         });
 }
 
-// 👉 AUTO HIDE POPUP IF ALREADY JOINED
-window.onload = function () {
-    if (localStorage.getItem("joinedTelegram") === "yes") {
-        document.getElementById("telegramPopup").style.display = "none";
-        loadM3U();
-    }
-};
+// ALWAYS SHOW POPUP FIRST (no auto skip)
 </script>
 
 </body>
