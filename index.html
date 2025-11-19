@@ -12,12 +12,12 @@
 body {
   margin: 0;
   background: #000;
-  font-family: "Poppins", Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #fff;
   text-align: center;
 }
 
-/* Header */
+/* ---------------- HEADER ---------------- */
 .header {
   background: #061a12;
   color: #00ffb3;
@@ -27,77 +27,76 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 0 20px rgba(0,255,179,0.3);
+  gap: 12px;
   position: relative;
-  z-index: 5;
+  box-shadow: 0 0 25px rgba(0,255,179,0.3);
 }
 
 .header-icon {
   width: 28px;
   height: 28px;
-  border: 2px solid #00ffb3;
+  border: 3px solid #00ffb3;
   border-radius: 50%;
+  box-shadow: 0 0 15px #00ffb3;
 }
 
-/* Video Section Full Screen */
+/* Quality Button */
+.quality-btn {
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 2px solid #00ffb3;
+  color: #00ffb3;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0,255,179,0.7);
+}
+
+/* ---------------- VIDEO ---------------- */
 .video-container {
-  position: relative;
   width: 100%;
-  height: 100vh; /* full screen height */
+  height: 240px;
   background: #000;
-  overflow: hidden;
+  position: relative;
 }
 
 video {
   width: 100%;
   height: 100%;
+  background: #000;
   object-fit: cover;
 }
 
-/* QUALITY BUTTON */
-.quality-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 8px 14px;
-  background: rgba(0,0,0,0.7);
-  border: 2px solid #00ffb3;
-  color: #00ffb3;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  z-index: 10;
-}
-
-/* QUALITY MENU */
 #qualityMenu {
   position: absolute;
-  top: 60px;
-  right: 20px;
+  right: 10px;
+  top: 55px;
   background: #0a0a0a;
   border: 1px solid #00ffb3;
   border-radius: 8px;
   padding: 10px;
   display: none;
-  z-index: 10;
+  z-index: 999;
 }
+
 #qualityMenu button {
   background: none;
   border: none;
   color: #00ffb3;
   padding: 6px 8px;
   width: 100%;
-  font-size: 14px;
   cursor: pointer;
-  text-align: left;
+  font-size: 14px;
 }
+
 #qualityMenu button:hover {
   background: #022b20;
 }
 
-/* Sections Below Video */
+/* ---------------- SECTIONS ---------------- */
 .section {
   margin: 20px auto;
   width: 90%;
@@ -107,95 +106,97 @@ video {
   padding: 20px;
   box-shadow: 0 0 25px rgba(0,255,179,0.2);
 }
+
 .section h3 {
   font-size: 18px;
   color: #00ffb3;
-  margin-bottom: 10px;
 }
 
 /* Buttons */
 .btn {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #00ffb3, #0099ff);
+  color: white;
   font-size: 16px;
   font-weight: bold;
-  color: #fff;
-  background: linear-gradient(90deg, #00ffb3, #0099ff);
+  box-shadow: 0 0 12px rgba(0,255,179,0.3);
   cursor: pointer;
-  transition: 0.3s;
+  transition: .3s;
 }
+
 .btn:hover {
   transform: scale(1.03);
 }
 
-/* Popup */
+/* ---------------- POPUP ---------------- */
 #popup {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
+  inset: 0;
+  background: rgba(0,0,0,0.85);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
+
 .popup-box {
   width: 85%;
-  max-width: 380px;
+  max-width: 360px;
   background: #0a0a0a;
   border-radius: 20px;
-  padding: 25px 20px;
+  padding: 25px;
   border: 1px solid #00ffb3;
-  text-align: center;
 }
 
 .popup-btn {
   width: 100%;
-  border: none;
+  padding: 14px;
   border-radius: 10px;
-  margin-bottom: 12px;
-  padding: 12px 0;
-  font-size: 17px;
+  margin-top: 12px;
+  font-size: 16px;
   font-weight: bold;
+  border: none;
   cursor: pointer;
 }
+
 .popup-btn:first-child {
-  background: linear-gradient(90deg,#00c6ff,#0072ff);
-  color: #fff;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: white;
 }
+
 .popup-btn:last-child {
-  background: #1a1a1a;
+  background: #111;
   border: 1px solid #00ffb3;
-  color: #fff;
+  color: #00ffb3;
 }
 </style>
 </head>
-
 <body>
 
-<!-- POPUP -->
+<!-- ---------------- POPUP ---------------- -->
 <div id="popup">
   <div class="popup-box">
-    <h2>💬 Support Us!</h2>
-    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for updates.</p>
+    <h2 style="color:#00ffb3;">💬 Support Us</h2>
+    <p>Join our Telegram Channel <b style="color:#00ffb3;">CRICKET YODDHA</b></p>
     <button class="popup-btn" onclick="joinNow()">Join Now</button>
     <button class="popup-btn" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- ---------------- MAIN CONTENT ---------------- -->
 <div id="main-content" style="display:none;">
 
   <div class="header">
     <div class="header-icon"></div>
     CRICKET YODDHA
+    <button class="quality-btn" onclick="toggleQuality()">⚙ Quality</button>
   </div>
 
   <div class="video-container">
-    <video id="video" controls autoplay muted playsinline></video>
-    <button class="quality-btn" onclick="toggleQuality()">⚙ Quality</button>
+    <video id="video" controls autoplay></video>
     <div id="qualityMenu"></div>
   </div>
 
@@ -208,27 +209,27 @@ video {
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
   </div>
+
 </div>
 
 <script>
 function joinNow(){ window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank"); }
+
 function already(){
   document.getElementById("popup").style.display="none";
   document.getElementById("main-content").style.display="block";
 }
+
 function sharePage(){
   navigator.clipboard.writeText(window.location.href);
   alert("✅ Link Copied!");
 }
 
-/* ===============================
-   SHAKA PLAYER INITIALIZATION
-================================*/
+/* ------------ SHAKA PLAYER ------------ */
 async function initPlayer(){
-  const video = document.getElementById('video');
+  const video = document.getElementById("video");
   const player = new shaka.Player(video);
 
-  // DRM Keys
   player.configure({
     drm: {
       clearKeys: {
@@ -243,7 +244,6 @@ async function initPlayer(){
   try {
     await player.load(mpd);
 
-    // QUALITY MENU
     const tracks = player.getVariantTracks();
     const menu = document.getElementById("qualityMenu");
     menu.innerHTML = "";
@@ -252,26 +252,26 @@ async function initPlayer(){
       let btn = document.createElement("button");
       btn.innerText = t.height + "p";
       btn.onclick = () => {
-        player.configure({ abr: { enabled: false } });
+        player.configure({ abr: { enabled: false }});
         player.selectVariantTrack(t, true);
-        menu.style.display="none";
+        menu.style.display = "none";
       };
       menu.appendChild(btn);
     });
 
   } catch (e){
-    console.error("Error loading video", e);
-    alert("❌ Video failed to load!");
+    console.error("Video Error:", e);
   }
 }
+
 shaka.polyfill.installAll();
 initPlayer();
 
-/* QUALITY MENU SHOW/HIDE */
 function toggleQuality(){
-  const q = document.getElementById("qualityMenu");
+  let q = document.getElementById("qualityMenu");
   q.style.display = q.style.display === "block" ? "none" : "block";
 }
 </script>
+
 </body>
 </html>
