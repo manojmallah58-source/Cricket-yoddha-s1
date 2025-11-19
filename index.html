@@ -5,17 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRICKET YODDHA - Live Cricket Stream</title>
 
-<!-- Shaka Player -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
 
 <style>
 body {
   margin: 0;
   background: #000;
-  font-family: "Poppins", Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #fff;
   text-align: center;
   overflow-x: hidden;
+}
+
+/* ---------------- POPUP (NEW STYLE) ---------------- */
+#popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.popup-box {
+  width: 88%;
+  max-width: 420px;
+  background: rgba(15, 15, 15, 0.92);
+  padding: 28px 22px;
+  border-radius: 22px;
+  box-shadow: 0 0 25px rgba(0,255,150,0.45);
+  border: 1px solid rgba(0,255,150,0.35);
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+
+.popup-box h2 {
+  font-size: 28px;
+  margin: 0 0 10px;
+}
+
+.popup-box p {
+  color: #b8b8b8;
+  font-size: 15px;
+  margin-bottom: 22px;
+}
+
+.highlight {
+  color: #00ffb3;
+  font-weight: 600;
+}
+
+/* Popup Buttons */
+.popup-btn-main {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: none;
+  font-size: 18px;
+  padding: 14px 0;
+  border-radius: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.popup-btn-secondary {
+  width: 100%;
+  background: transparent;
+  color: #fff;
+  border: 2px solid #00ffb3;
+  font-size: 18px;
+  padding: 14px 0;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* HEADER */
@@ -60,17 +131,15 @@ body {
   width: 100%;
   height: 240px;
   background: #000;
-  position: relative;
   margin-top: 10px;
 }
-
 video {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* QUALITY MENU DROPDOWN */
+/* QUALITY MENU */
 #qualityMenu {
   position: absolute;
   right: 10px;
@@ -81,25 +150,9 @@ video {
   padding: 6px 0;
   display: none;
   width: 100px;
-  z-index: 999;
-  box-shadow: 0 0 20px rgba(0,255,179,0.2);
 }
 
-#qualityMenu button {
-  background: none;
-  border: none;
-  color: #00ffb3;
-  padding: 10px 0;
-  width: 100%;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-#qualityMenu button:hover {
-  background: #022b20;
-}
-
-/* SECTION */
+/* Section */
 .section {
   margin: 20px auto;
   width: 90%;
@@ -107,74 +160,26 @@ video {
   background: #061a12;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 0 25px rgba(0,255,179,0.2);
+  box-shadow: 0 0 25px rgba(0,255,179,0.25);
 }
 
 .section h3 {
-  font-size: 18px;
   color: #00ffb3;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-/* BUTTON */
 .btn {
   width: 100%;
   padding: 12px;
-  border: none;
   border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
   color: #fff;
-  background: linear-gradient(90deg, #00ffb3, #0099ff);
-  cursor: pointer;
-  transition: 0.3s;
-}
-.btn:hover {
-  transform: scale(1.03);
-}
-
-/* POPUP */
-#popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.popup-box {
-  width: 85%;
-  max-width: 380px;
-  background: #0a0a0a;
-  border-radius: 20px;
-  padding: 25px 20px;
-  border: 1px solid #00ffb3;
-  text-align: center;
-}
-
-.popup-btn {
-  width: 100%;
   border: none;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  padding: 12px 0;
-  font-size: 17px;
-  font-weight: bold;
+  background: linear-gradient(90deg,#00ffb3,#0099ff);
   cursor: pointer;
 }
 
-.popup-btn:first-child {
-  background: linear-gradient(90deg,#00c6ff,#0072ff);
-  color: #fff;
-}
-.popup-btn:last-child {
-  background: #1a1a1a;
-  border: 1px solid #00ffb3;
-  color: #fff;
-}
 </style>
 </head>
 
@@ -184,13 +189,15 @@ video {
 <div id="popup">
   <div class="popup-box">
     <h2>💬 Support Us!</h2>
-    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong></p>
-    <button class="popup-btn" onclick="joinNow()">Join Now</button>
-    <button class="popup-btn" onclick="already()">Already Joined</button>
+    <p>Join our Telegram channel <span class="highlight">CRICKET YODDHA</span><br>
+    for instant updates, highlights, and exclusive links.</p>
+
+    <button class="popup-btn-main" onclick="joinNow()">Join Now</button>
+    <button class="popup-btn-secondary" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- MAIN -->
+<!-- MAIN PAGE -->
 <div id="main-content" style="display:none;">
 
   <div class="header">
@@ -199,19 +206,16 @@ video {
     <button class="quality-btn" onclick="toggleQuality()">⚙</button>
   </div>
 
-  <!-- VIDEO PLAYER -->
   <div class="video-container">
     <video id="video" controls autoplay></video>
     <div id="qualityMenu"></div>
   </div>
 
-  <!-- TELEGRAM -->
   <div class="section">
-    <h3>🔔 Follow Us for Updates</h3>
-    <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
+    <h3>🔔 Follow Us</h3>
+    <button class="btn" onclick="joinNow()">Join Telegram</button>
   </div>
 
-  <!-- SHARE -->
   <div class="section">
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
@@ -221,45 +225,40 @@ video {
 
 <script>
 function joinNow() {
-  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
+  window.open("https://t.me/+rwZKMV0-L8wyOTll", "_blank");
 }
-
 function already() {
   document.getElementById("popup").style.display="none";
   document.getElementById("main-content").style.display="block";
 }
 
+/* Share Feature */
 async function sharePage() {
   const shareData = {
-    title: "CRICKET YODDHA - Live Cricket Stream",
-    text: "Live Cricket Stream Dekhne Ke Liye Visit Kare:",
+    title: "CRICKET YODDHA",
+    text: "Live Cricket Stream Dekhne Ke Liye Check Kare:",
     url: window.location.href
   };
 
   if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-    } catch (err) {
-      console.log("Share failed:", err);
-    }
+    await navigator.share(shareData);
   } else {
     navigator.clipboard.writeText(window.location.href);
-    alert("✅ Link Copied!");
+    alert("Link Copied!");
   }
 }
 
-/* SHAKA PLAYER */
-async function initPlayer(){
-  const video = document.getElementById('video');
+
+/* Shaka Player */
+async function initPlayer() {
+  const video = document.getElementById("video");
   const player = new shaka.Player(video);
 
   player.configure({
-    drm: {
-      clearKeys: {
-        "2f5ed0dd0a0ca671dee3948dbbe023d4":
-        "7039b2570d5d429c7f4a7a4058ba5135"
-      }
-    }
+    drm: { clearKeys: { 
+      "2f5ed0dd0a0ca671dee3948dbbe023d4":
+      "7039b2570d5d429c7f4a7a4058ba5135"
+    }}
   });
 
   const mpd = "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
@@ -267,43 +266,34 @@ async function initPlayer(){
   try {
     await player.load(mpd);
 
-    const tracks = player.getVariantTracks();
     const menu = document.getElementById("qualityMenu");
-
-    let unique = {};
-    menu.innerHTML = "";
+    const tracks = player.getVariantTracks();
+    let q = {};
 
     tracks.forEach(t => {
-      if (!unique[t.height]) unique[t.height] = t;
+      if (!q[t.height]) q[t.height] = t;
     });
 
-    let sorted = Object.keys(unique).sort((a,b) => b - a);
-
-    sorted.forEach(height => {
-      let track = unique[height];
-      let btn = document.createElement("button");
-      btn.innerText = height + "p";
-
-      btn.onclick = () => {
-        player.configure({ abr: { enabled: false } });
-        player.selectVariantTrack(track, true);
+    Object.keys(q).sort((a,b)=>b-a).forEach(h=>{
+      let b = document.createElement("button");
+      b.innerText = h+"p";
+      b.onclick = ()=>{
+        player.configure({ abr:{ enabled:false } });
+        player.selectVariantTrack(q[h], true);
         menu.style.display="none";
       };
-
-      menu.appendChild(btn);
+      menu.appendChild(b);
     });
 
-  } catch (e) {
-    console.error("Error loading video", e);
-  }
+  } catch(e) { console.log(e); }
 }
 
 shaka.polyfill.installAll();
 initPlayer();
 
-function toggleQuality(){
-  let q = document.getElementById("qualityMenu");
-  q.style.display = q.style.display === "block" ? "none" : "block";
+function toggleQuality() {
+  let x = document.getElementById("qualityMenu");
+  x.style.display = x.style.display==="block" ? "none":"block";
 }
 </script>
 
