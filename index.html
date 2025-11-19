@@ -3,295 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRICKET YODDHA - Live Cricket Stream</title>
-
-<!-- Shaka Player -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
+<title>CRICKET YODDHA - Live TV</title>
 
 <style>
 body {
   margin: 0;
   background: #000;
-  font-family: "Poppins", Arial, sans-serif;
-  color: #fff;
-  text-align: center;
-  overflow-x: hidden;
+  font-family: Arial, sans-serif;
 }
 
-/* HEADER */
+/* Header */
 .header {
-  background: #061a12;
-  color: #00ffb3;
-  padding: 15px 0;
-  font-size: 26px;
-  font-weight: bold;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  position: relative;
+  background: #001a0f;
+  padding: 12px 15px;
+  border-bottom: 2px solid #00ff99;
 }
 
-.header-icon {
-  width: 28px;
-  height: 28px;
-  border: 2px solid #00ffb3;
-  border-radius: 50%;
-}
-
-/* QUALITY BUTTON */
-.quality-btn {
-  padding: 8px 18px;
-  background: #000;
-  border: 2px solid #00ffb3;
-  color: #00ffb3;
-  border-radius: 12px;
-  font-size: 15px;
+.logo {
+  font-size: 22px;
+  color: #00ff99;
   font-weight: bold;
-  box-shadow: 0 0 15px rgba(0,255,179,0.5);
-  cursor: pointer;
-  position: absolute;
-  right: 10px;
-  top: 12px;
 }
 
-/* VIDEO */
-.video-container {
+/* Share button */
+.share-btn {
+  background: #00ff99;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+}
+
+/* Video container */
+#video-container {
   width: 100%;
-  height: 240px;
+  height: 260px;
   background: #000;
   position: relative;
-  margin-top: 10px;
 }
 
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+/* Quality button */
+#qualityBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 8px 14px;
+  background: rgba(0,255,120,0.2);
+  border: 1px solid #00ff99;
+  color: #00ff99;
+  border-radius: 10px;
+  font-size: 14px;
+  backdrop-filter: blur(5px);
 }
 
-/* QUALITY MENU DROPDOWN */
+/* Quality list */
 #qualityMenu {
   position: absolute;
-  right: 10px;
-  top: 60px;
-  background: #0f1f17;
-  border: 1px solid #00ffb3;
+  top: 55px;
+  right: 15px;
+  background: rgba(0,0,0,0.85);
+  border: 1px solid #00ff99;
   border-radius: 10px;
-  padding: 6px 0;
   display: none;
-  width: 100px;
-  z-index: 999;
-  box-shadow: 0 0 20px rgba(0,255,179,0.2);
+  padding: 8px;
 }
 
-#qualityMenu button {
-  background: none;
-  border: none;
-  color: #00ffb3;
-  padding: 10px 0;
-  width: 100%;
-  font-size: 15px;
+.quality-item {
+  color: #00ff99;
+  padding: 8px 10px;
   cursor: pointer;
 }
 
-#qualityMenu button:hover {
-  background: #022b20;
-}
-
-/* SECTION */
-.section {
-  margin: 20px auto;
-  width: 90%;
-  max-width: 400px;
-  background: #061a12;
-  border-radius: 15px;
+/* Share Popup */
+.share-popup {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  border-radius: 20px 20px 0 0;
   padding: 20px;
-  box-shadow: 0 0 25px rgba(0,255,179,0.2);
+  color: #fff;
+  transition: 0.4s;
 }
 
-.section h3 {
-  font-size: 18px;
-  color: #00ffb3;
+.share-title {
+  font-size: 16px;
   margin-bottom: 10px;
 }
 
-/* BUTTON */
-.btn {
-  width: 100%;
+.share-box {
+  background: #2b2b2b;
   padding: 12px;
-  border: none;
   border-radius: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background: linear-gradient(90deg, #00ffb3, #0099ff);
-  cursor: pointer;
-  transition: 0.3s;
-}
-.btn:hover {
-  transform: scale(1.03);
-}
-
-/* POPUP */
-#popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  z-index: 9999;
 }
 
-.popup-box {
-  width: 85%;
-  max-width: 380px;
-  background: #0a0a0a;
-  border-radius: 20px;
-  padding: 25px 20px;
-  border: 1px solid #00ffb3;
+.app-row {
+  margin-top: 20px;
+  display: flex;
+  gap: 25px;
+  overflow-x: auto;
+}
+
+.app {
   text-align: center;
-}
-
-.popup-btn {
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  padding: 12px 0;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.popup-btn:first-child {
-  background: linear-gradient(90deg,#00c6ff,#0072ff);
-  color: #fff;
-}
-.popup-btn:last-child {
-  background: #1a1a1a;
-  border: 1px solid #00ffb3;
-  color: #fff;
+  width: 60px;
+  color: #ccc;
+  font-size: 13px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- POPUP -->
-<div id="popup">
-  <div class="popup-box">
-    <h2>💬 Support Us!</h2>
-    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong></p>
-    <button class="popup-btn" onclick="joinNow()">Join Now</button>
-    <button class="popup-btn" onclick="already()">Already Joined</button>
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">● CRICKET YODDHA</div>
+  <button class="share-btn" onclick="openShare()">Share</button>
+</div>
+
+<!-- VIDEO PLAYER -->
+<div id="video-container">
+  <video id="video" width="100%" height="100%" controls></video>
+
+  <button id="qualityBtn" onclick="toggleQuality()">Quality</button>
+  
+  <div id="qualityMenu">
+    <div class="quality-item" onclick="setQuality(180)">180p</div>
+    <div class="quality-item" onclick="setQuality(360)">360p</div>
+    <div class="quality-item" onclick="setQuality(720)">720p</div>
+    <div class="quality-item" onclick="setQuality(1080)">1080p</div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div id="main-content" style="display:none;">
+<!-- SHARE POPUP -->
+<div id="sharePopup" class="share-popup">
+  <div class="share-title">Sharing text</div>
 
-  <div class="header">
-    <div class="header-icon"></div>
-    CRICKET YODDHA
-    <button class="quality-btn" onclick="toggleQuality()">⚙</button>
+  <div class="share-box">
+    CRICKET YODDHA Live Watch  
+    <span onclick="copyText()">📋</span>
   </div>
 
-  <!-- VIDEO PLAYER -->
-  <div class="video-container">
-    <video id="video" controls autoplay></video>
-    <div id="qualityMenu"></div>
+  <div class="app-row">
+    <div class="app">WhatsApp</div>
+    <div class="app">Telegram</div>
+    <div class="app">Messages</div>
+    <div class="app">Gmail</div>
   </div>
-
-  <!-- TELEGRAM -->
-  <div class="section">
-    <h3>🔔 Follow Us for Updates</h3>
-    <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
-  </div>
-
-  <!-- SHARE -->
-  <div class="section">
-    <h3>🔗 Share This Page</h3>
-    <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
-  </div>
-
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.10/shaka-player.compiled.js"></script>
 
 <script>
-function joinNow() {
-  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
+// Init video
+document.addEventListener("DOMContentLoaded", function () {
+    var video = document.getElementById("video");
+    var player = new shaka.Player(video);
+
+    player.load("https://3141707313.cdn.futbolsystems.com/hls/ATN-ENGLISH/index.m3u8");
+});
+
+// Quality dropdown
+function toggleQuality() {
+  let menu = document.getElementById("qualityMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
-function already() {
-  document.getElementById("popup").style.display="none";
-  document.getElementById("main-content").style.display="block";
-}
-function sharePage() {
-  navigator.clipboard.writeText(window.location.href);
-  alert("✅ Link Copied!");
+
+function setQuality(q) {
+  alert(q + "p Selected");
+  document.getElementById("qualityMenu").style.display = "none";
 }
 
-/* SHAKA PLAYER */
-async function initPlayer(){
-  const video = document.getElementById('video');
-  const player = new shaka.Player(video);
-
-  player.configure({
-    drm: {
-      clearKeys: {
-        "2f5ed0dd0a0ca671dee3948dbbe023d4":
-        "7039b2570d5d429c7f4a7a4058ba5135"
-      }
-    }
-  });
-
-  const mpd = "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
-
-  try {
-    await player.load(mpd);
-
-    const tracks = player.getVariantTracks();
-    const menu = document.getElementById("qualityMenu");
-
-    let unique = {};
-
-    // CLEAR MENU
-    menu.innerHTML = "";
-
-    tracks.forEach(t => {
-      if (!unique[t.height]) {
-        unique[t.height] = t;
-      }
-    });
-
-    let sorted = Object.keys(unique).sort((a,b) => b - a);
-
-    sorted.forEach(height => {
-      let track = unique[height];
-
-      let btn = document.createElement("button");
-      btn.innerText = height + "p";
-
-      btn.onclick = () => {
-        player.configure({ abr: { enabled: false } });
-        player.selectVariantTrack(track, true);
-        menu.style.display="none";
-      };
-
-      menu.appendChild(btn);
-    });
-
-  } catch (e) {
-    console.error("Error loading video", e);
-  }
+// Share popup
+function openShare() {
+  document.getElementById("sharePopup").style.bottom = "0px";
 }
-shaka.polyfill.installAll();
-initPlayer();
 
-function toggleQuality(){
-  let q = document.getElementById("qualityMenu");
-  q.style.display = q.style.display === "block" ? "none" : "block";
+function copyText() {
+  navigator.clipboard.writeText("CRICKET YODDHA Live Watch");
+  alert("Copied!");
 }
 </script>
 
