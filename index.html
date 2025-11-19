@@ -1,1 +1,57 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Live Stream</title>
+
+<!-- Shaka Player -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
+
+<style>
+  body { margin:0; background:#000; }
+  video { width:100%; height:100vh; background:#000; }
+</style>
+</head>
+
+<body>
+
+<video id="video" autoplay controls></video>
+
+<script>
+async function initPlayer() {
+  const video = document.getElementById('video');
+  const player = new shaka.Player(video);
+
+  // Handle player errors
+  player.addEventListener('error', e => console.log("Error:", e));
+
+  // DRM License Keys
+  const drmKeys = {
+    "2f5ed0dd0a0ca671dee3948dbbe023d4": "7039b2570d5d429c7f4a7a4058ba5135"
+  };
+
+  // Configure ClearKey DRM
+  player.configure({
+    drm: {
+      clearKeys: drmKeys
+    }
+  });
+
+  // Your MPD link
+  const manifestUrl =
+    "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
+
+  try {
+    await player.load(manifestUrl);
+    console.log("Stream Loaded Successfully!");
+  } catch (e) {
+    console.error("Load Error:", e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initPlayer);
+</script>
+
+</body>
+</html>
