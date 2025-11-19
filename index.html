@@ -41,31 +41,31 @@ body {
 /* Video Section */
 .video-container {
   width: 100%;
-  height: auto;
+  padding: 10px 0 0;
   background: #000;
-  padding: 10px 0;
 }
-
 video {
   width: 95%;
-  max-width: 700px;
+  max-width: 720px;
   background: #000;
   border: 2px solid #00ffb3;
   border-radius: 12px;
 }
 
-/* Quality Button */
+/* Quality Select */
+.quality-wrap {
+  margin: 10px auto 0;
+}
 #qualitySelect {
-  margin-top: 10px;
   padding: 10px;
   width: 90%;
-  max-width: 300px;
+  max-width: 320px;
   background: #061a12;
   border: 1px solid #00ffb3;
   color: #00ffb3;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 /* Sections */
@@ -109,8 +109,7 @@ video {
 /* Popup */
 #popup {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  inset: 0;
   background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
@@ -187,12 +186,15 @@ video {
     CRICKET YODDHA
   </div>
 
-  <!-- VIDEO PLAYER -->
+  <!-- Video Player -->
   <div class="video-container">
-    <video id="video" controls autoplay></video>
-    <select id="qualitySelect">
-      <option value="auto">Auto Quality</option>
-    </select>
+    <video id="video" playsinline controls muted></video>
+
+    <div class="quality-wrap">
+      <select id="qualitySelect" disabled>
+        <option>Loading qualities...</option>
+      </select>
+    </div>
   </div>
 
   <!-- Follow Section -->
@@ -214,13 +216,13 @@ function joinNow(){
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
 
-// Hide popup
+// Hide popup, show page
 function already(){
   document.getElementById("popup").style.display = "none";
   document.getElementById("main-content").style.display = "block";
 }
 
-// SHARE PAGE
+// Share Page
 function sharePage(){
   const shareData = {
     title: "CRICKET YODDHA Live",
@@ -228,63 +230,125 @@ function sharePage(){
     url: window.location.href
   };
 
-  if (navigator.share) navigator.share(shareData);
-  else {
+  if (navigator.share) {
+    navigator.share(shareData)
+      .catch(() => {});
+  } else {
     navigator.clipboard.writeText(window.location.href);
-    alert("✅ Link copied!");
+    alert("✅ Link copied! Share it manually.");
   }
 }
 
 // =====================
 // SHAKA PLAYER SETUP
 // =====================
+
+// MPD + ClearKey
 const manifestUri =
-"https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
+  "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
 
 const drmKeys = {
   "2f5ed0dd0a0ca671dee3948dbbe023d4": "7039b2570d5d429c7f4a7a4058ba5135"
 };
 
 async function initPlayer() {
-  const video = document.getElementById('video');
+  // Check support
+  if (!shaka.Player.isBrowserSupported()) {
+    alert("Your browser does not support the player.");
+    return;
+  }
+
+  const video = document.getElementById("video");
+  const qualitySelect = document.getElementById("qualitySelect");
+
   const player = new shaka.Player(video);
 
+  // Basic config
   player.configure({
-    drm: { clearKeys: drmKeys }
+    drm: {
+      clearKeys: drmKeys
+    },
+    streaming: {
+      bufferingGoal: 15, // faster start
+      rebufferingGoal: 5
+    },
+    abr: {
+      enabled: true
+    }
+  });
+
+  // Error handle
+  player.addEventListener("error", (e) => {
+    console.error("Shaka Error", e.detail);
+    alert("Playback error, please refresh page.");
   });
 
   try {
     await player.load(manifestUri);
-    console.log("Stream Loaded!");
-  } catch (e) {
-    console.error("Load Failed", e);
-  }
+    console.log("✅ Stream loaded");
 
-  // Add Quality Options
-  const qualitySelect = document.getElementById("qualitySelect");
-  player.getVariantTracks().forEach(track => {
-    const opt = document.createElement("option");
-    opt.value = track.id;
-    opt.text = `${track.height}p`;
-    qualitySelect.appendChild(opt);
-  });
-
-  qualitySelect.addEventListener("change", function () {
-    let id = this.value;
-
-    if (id === "auto") {
-      player.configure({ abr: { enabled: true }});
-    } else {
-      player.configure({ abr: { enabled: false }});
-      player.selectVariantTrack(
-        player.getVariantTracks().find(t => t.id == id),
-        true
-      );
+    // Try autoplay
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // If blocked by browser, user can press play
+        console.warn("Autoplay blocked, user interaction needed.");
+      });
     }
-  });
+
+    // Fill quality options
+    const tracks = player.getVariantTracks().filter(t => t.height); // ignore audio only
+    // Clear first
+    qualitySelect.innerHTML = "";
+
+    // Auto Option
+    const autoOption = document.createElement("option");
+    autoOption.value = "auto";
+    autoOption.textContent = "Auto Quality";
+    qualitySelect.appendChild(autoOption);
+
+    // Unique heights
+    const added = new Set();
+    tracks.forEach(track => {
+      if (!added.has(track.height)) {
+        added.add(track.height);
+        const opt = document.createElement("option");
+        opt.value = track.height;
+        opt.textContent = track.height + "p";
+        qualitySelect.appendChild(opt);
+      }
+    });
+
+    qualitySelect.disabled = false;
+
+    // On change quality
+    qualitySelect.addEventListener("change", () => {
+      const val = qualitySelect.value;
+
+      if (val === "auto") {
+        player.configure({ abr: { enabled: true } });
+      } else {
+        player.configure({ abr: { enabled: false } });
+
+        // select all tracks that match that height (for both audio langs if any)
+        const allTracks = player.getVariantTracks();
+        const match = allTracks.filter(t => t.height == val);
+
+        if (match.length) {
+          // choose first match
+          player.selectVariantTrack(match[0], /* clearBuffer */ true);
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Load failed", error);
+    alert("Could not load stream. Please check link or try again.");
+  }
 }
 
-document.addEventListener('DOMContentLoaded', initPlayer);
+// Init when page ready
+document.addEventListener("DOMContentLoaded", initPlayer);
 </script>
 
 </body>
