@@ -1,52 +1,234 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live Stream</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRICKET YODDHA - Live Cricket Stream</title>
 
 <!-- Shaka Player -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
 
 <style>
-  body { margin:0; background:#000; }
-  video { width:100%; height:100vh; background:#000; }
+body {
+  margin: 0;
+  background: #000;
+  font-family: "Poppins", Arial, sans-serif;
+  color: #fff;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  background: #061a12;
+  color: #00ffb3;
+  padding: 15px 0;
+  font-size: 26px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 0 20px rgba(0,255,179,0.3);
+}
+.header-icon {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #00ffb3;
+  border-radius: 50%;
+}
+
+/* Video Player */
+.video-container {
+  width: 100%;
+  height: 240px;
+  background: #000;
+}
+video {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+/* Cards */
+.section {
+  margin: 20px auto;
+  width: 90%;
+  max-width: 420px;
+  background: #061a12;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 25px rgba(0,255,179,0.2);
+}
+.section h3 {
+  font-size: 18px;
+  color: #00ffb3;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(90deg, #00ffb3, #0099ff);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn:hover {
+  transform: scale(1.05);
+}
+
+/* Popup */
+#popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.popup-box {
+  width: 88%;
+  max-width: 380px;
+  background: #0a0a0a;
+  border-radius: 20px;
+  padding: 25px 20px;
+  border: 1px solid rgba(0,255,179,0.5);
+  box-shadow: 0 0 25px rgba(0,255,179,0.4), 0 0 40px rgba(0,255,255,0.2);
+}
+.popup-box h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.popup-box p {
+  color: #ccc;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+/* Popup Buttons */
+.popup-btn {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 12px 0;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: 0.3s;
+}
+.popup-btn:first-child {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: #fff;
+}
+.popup-btn:last-child {
+  background: #1a1a1a;
+  border: 1px solid #00ffb3;
+  color: #fff;
+}
 </style>
 </head>
 
 <body>
 
-<video id="video" autoplay controls></video>
+<!-- Popup -->
+<div id="popup">
+  <div class="popup-box">
+    <h2>💬 Support Us!</h2>
+    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for instant updates, highlights & exclusive links.</p>
+    <button class="popup-btn" onclick="joinNow()">Join Now</button>
+    <button class="popup-btn" onclick="already()">Already Joined</button>
+  </div>
+</div>
+
+<!-- Main Page -->
+<div id="main-content" style="display:none;">
+
+  <div class="header">
+    <div class="header-icon"></div>
+    CRICKET YODDHA
+  </div>
+
+  <!-- DRM STREAM PLAYER -->
+  <div class="video-container">
+    <video id="video" autoplay controls></video>
+  </div>
+
+  <!-- Follow -->
+  <div class="section">
+    <h3>🔔 Follow Us for Updates</h3>
+    <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
+  </div>
+
+  <!-- Share -->
+  <div class="section">
+    <h3>🔗 Share This Page</h3>
+    <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
+  </div>
+</div>
+
 
 <script>
+/* Telegram */
+function joinNow(){
+  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
+}
+
+/* Popup */
+function already(){
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("main-content").style.display = "block";
+}
+
+/* Share Page */
+function sharePage(){
+  const shareData = {
+    title: "CRICKET YODDHA Live",
+    text: "Watch Live Cricket on CRICKET YODDHA!",
+    url: window.location.href
+  };
+
+  if (navigator.share) navigator.share(shareData);
+  else {
+    navigator.clipboard.writeText(window.location.href);
+    alert("✅ Link copied! Share it manually.");
+  }
+}
+
+/* SHAKA PLAYER + CLEAKEY DRM */
 async function initPlayer() {
   const video = document.getElementById('video');
   const player = new shaka.Player(video);
 
-  // Handle player errors
-  player.addEventListener('error', e => console.log("Error:", e));
-
-  // DRM License Keys
-  const drmKeys = {
-    "2f5ed0dd0a0ca671dee3948dbbe023d4": "7039b2570d5d429c7f4a7a4058ba5135"
-  };
-
-  // Configure ClearKey DRM
   player.configure({
     drm: {
-      clearKeys: drmKeys
+      clearKeys: {
+        "2f5ed0dd0a0ca671dee3948dbbe023d4": 
+        "7039b2570d5d429c7f4a7a4058ba5135"
+      }
     }
   });
 
-  // Your MPD link
-  const manifestUrl =
+  const manifestURL =
     "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
 
   try {
-    await player.load(manifestUrl);
-    console.log("Stream Loaded Successfully!");
+    await player.load(manifestURL);
+    console.log("DRM Stream Loaded!");
   } catch (e) {
-    console.error("Load Error:", e);
+    console.error("Error loading stream:", e);
   }
 }
 
