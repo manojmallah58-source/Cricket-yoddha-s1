@@ -1,290 +1,116 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRICKET YODDHA - Live Cricket Stream</title>
+<title>Live Stream Player</title>
 
-<!-- Shaka Player -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
+<!-- Shaka Player + UI -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/controls.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.ui.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  background: #000;
-  font-family: "Poppins", Arial, sans-serif;
-  color: #fff;
-  overflow-x: hidden;
-}
+    body {
+        margin:0;
+        background:#000;
+    }
 
-/* Header */
-.header {
-  background: #061a12;
-  color: #00ffb3;
-  padding: 15px 0;
-  font-size: 26px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-.header-icon {
-  width: 28px;
-  height: 28px;
-  border: 2px solid #00ffb3;
-  border-radius: 50%;
-}
+    #video-container {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        background: #000;
+    }
 
-/* Video */
-.video-container {
-  width: 100%;
-  height: 250px;
-  background: #000;
-  position: relative;
-  overflow: hidden;
-}
-video {
-  width: 100%;
-  height: 100%;
-  background: #000;
-}
+    /* Loading Animation */
+    #loading-spinner {
+        position: absolute;
+        top:50%;
+        left:50%;
+        width:60px;
+        height:60px;
+        margin:-30px 0 0 -30px;
+        border:6px solid #444;
+        border-top:6px solid #fff;
+        border-radius:50%;
+        animation: spin 1s linear infinite;
+        display:none;
+        z-index: 10;
+    }
 
-/* Loader */
-#loader {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-}
-.loader-ring {
-  width: 60px;
-  height: 60px;
-  border: 6px solid #00ffb3;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Quality Button */
-.quality-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: #061a12;
-  border: 1px solid #00ffb3;
-  padding: 6px 10px;
-  font-size: 14px;
-  color: #00ffb3;
-  border-radius: 8px;
-  cursor: pointer;
-  z-index: 50;
-}
-.quality-list {
-  position: absolute;
-  bottom: 50px;
-  right: 10px;
-  background: #0b1a14;
-  border: 1px solid #00ffb3;
-  border-radius: 8px;
-  display: none;
-  z-index: 50;
-}
-.quality-list div {
-  padding: 8px 12px;
-  cursor: pointer;
-  border-bottom: 1px solid #003322;
-}
-.quality-list div:hover {
-  background: #003322;
-}
-
-/* Cards */
-.section {
-  margin: 20px auto;
-  width: 90%;
-  max-width: 420px;
-  background: #061a12;
-  border-radius: 15px;
-  padding: 20px;
-}
-.section h3 {
-  font-size: 18px;
-  color: #00ffb3;
-  margin-bottom: 10px;
-}
-
-/* Buttons */
-.btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  background: linear-gradient(90deg, #00ffb3, #0099ff);
-  color: white;
-  cursor: pointer;
-}
-
-/* Popup */
-#popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-.popup-box {
-  width: 90%;
-  max-width: 380px;
-  background: #111;
-  padding: 20px;
-  border-radius: 15px;
-  border: 1px solid #00ffb3;
-  text-align: center;
-}
-.popup-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 10px;
-  font-size: 17px;
-  cursor: pointer;
-  border: none;
-}
-.popup-btn:first-child {
-  background: #00c6ff;
-}
-.popup-btn:last-child {
-  background: transparent;
-  border: 1px solid #00ffb3;
-  color: white;
-}
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 </head>
 
 <body>
 
-<!-- Popup -->
-<div id="popup">
-  <div class="popup-box">
-    <h2>💬 Support Us</h2>
-    <p>Join our Telegram channel <b style="color:#00ffb3">CRICKET YODDHA</b> for instant updates.</p>
-    <button class="popup-btn" onclick="joinNow()">Join Now</button>
-    <button class="popup-btn" onclick="already()">Already Joined</button>
-  </div>
+<div id="video-container" class="shaka-video-container">
+    <div id="loading-spinner"></div>
+
+    <video id="video" autoplay controls muted></video>
 </div>
-
-<div id="main-content" style="display:none">
-
-  <div class="header">
-    <div class="header-icon"></div> CRICKET YODDHA
-  </div>
-
-  <div class="video-container">
-    <div id="loader"><div class="loader-ring"></div></div>
-    <video id="video" autoplay controls></video>
-
-    <div class="quality-btn" onclick="toggleQuality()">Quality ▾</div>
-    <div class="quality-list" id="qualityList"></div>
-  </div>
-
-  <div class="section">
-    <h3>🔔 Follow Us</h3>
-    <button class="btn" onclick="joinNow()">Join Telegram</button>
-  </div>
-
-  <div class="section">
-    <h3>🔗 Share</h3>
-    <button class="btn" onclick="sharePage()">Copy & Share</button>
-  </div>
-
-</div>
-
 
 <script>
-function joinNow() {
-  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
-}
-function already() {
-  popup.style.display="none";
-  main-content.style.display="block";
-}
-
-/* SHARE */
-function sharePage(){
-  navigator.clipboard.writeText(window.location.href);
-  alert("Link Copied!");
-}
-
-/* SHAKA PLAYER + QUALITY SELECTOR */
 async function initPlayer() {
-  const video = document.getElementById("video");
-  const player = new shaka.Player(video);
+    const video = document.getElementById("video");
+    const container = document.getElementById("video-container");
+    const spinner = document.getElementById("loading-spinner");
 
-  player.configure({
-    drm: { clearKeys: { 
-      "2f5ed0dd0a0ca671dee3948dbbe023d4": 
-      "7039b2570d5d429c7f4a7a4058ba5135" 
-    }}
-  });
+    // Initialize UI
+    const ui = new shaka.ui.Overlay(shaka.Player, container, video);
+    const player = ui.getControls().getPlayer();
 
-  const manifest = 
-  "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
+    // Debug Error Log
+    player.addEventListener("error", e => console.log("Player Error:", e));
 
-  await player.load(manifest);
+    // Show Spinner on Buffering
+    player.addEventListener("buffering", e => {
+        spinner.style.display = e.buffering ? "block" : "none";
+    });
 
-  /* Hide loader once playing */
-  video.onplaying = () => {
-    document.getElementById("loader").style.display="none";
-  };
+    // DRM Keys (Your Provided ClearKey)
+    const drmKeys = {
+        "2f5ed0dd0a0ca671dee3948dbbe023d4": "7039b2570d5d429c7f4a7a4058ba5135"
+    };
 
-  /* Quality Selector */
-  const qualityList = document.getElementById("qualityList");
-  const tracks = player.getVariantTracks();
+    player.configure({
+        drm: { clearKeys: drmKeys },
+        streaming: {
+            bufferingGoal: 20,
+            rebufferingGoal: 4
+        }
+    });
 
-  qualityList.innerHTML = "";
-  qualityList.innerHTML += `<div onclick="setQuality('auto')">Auto</div>`;
+    // UI Custom Settings (Includes Quality Button)
+    ui.configure({
+        controlPanelElements: [
+            'play_pause',
+            'volume',
+            'time_and_duration',
+            'spacer',
+            'quality',        // ✔ Quality Selector Added
+            'fullscreen',
+            'overflow_menu'
+        ],
+        addSeekBar: true
+    });
 
-  tracks.forEach(track => {
-    qualityList.innerHTML += `
-      <div onclick="setQuality(${track.id})">
-        ${track.height}p
-      </div>`;
-  });
+    // MPD Link
+    const manifestUrl =
+        "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
 
-  window.player = player;
-}
-
-/* toggle dropdown */
-function toggleQuality(){
-  const list = document.getElementById("qualityList");
-  list.style.display = list.style.display === "block" ? "none" : "block";
-}
-
-/* Apply Quality */
-function setQuality(id){
-  if(id === 'auto'){
-    window.player.configure({ abr: { enabled: true }});
-  } else {
-    window.player.configure({ abr: { enabled: false }});
-    window.player.selectVariantTrack(
-      window.player.getVariantTracks().find(t => t.id==id),
-      true
-    );
-  }
-  toggleQuality();
+    try {
+        spinner.style.display = "block";   // Show loader before loading
+        await player.load(manifestUrl);
+        spinner.style.display = "none";   // Hide loader after load
+        console.log("Stream Loaded Successfully!");
+    } catch (err) {
+        spinner.style.display = "none";
+        console.error("Load Error:", err);
+        alert("Stream Load Error: Check Link / DRM Keys");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", initPlayer);
