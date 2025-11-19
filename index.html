@@ -15,7 +15,6 @@ body {
   background: #000;
   font-family: "Poppins", Arial, sans-serif;
   color: #fff;
-  text-align: center;
   overflow-x: hidden;
 }
 
@@ -27,10 +26,9 @@ body {
   font-size: 26px;
   font-weight: bold;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
-  box-shadow: 0 0 20px rgba(0,255,179,0.3);
 }
 .header-icon {
   width: 28px;
@@ -39,16 +37,74 @@ body {
   border-radius: 50%;
 }
 
-/* Video Player */
+/* Video */
 .video-container {
   width: 100%;
-  height: 240px;
+  height: 250px;
   background: #000;
+  position: relative;
+  overflow: hidden;
 }
 video {
   width: 100%;
   height: 100%;
   background: #000;
+}
+
+/* Loader */
+#loader {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+.loader-ring {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #00ffb3;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Quality Button */
+.quality-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: #061a12;
+  border: 1px solid #00ffb3;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #00ffb3;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 50;
+}
+.quality-list {
+  position: absolute;
+  bottom: 50px;
+  right: 10px;
+  background: #0b1a14;
+  border: 1px solid #00ffb3;
+  border-radius: 8px;
+  display: none;
+  z-index: 50;
+}
+.quality-list div {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #003322;
+}
+.quality-list div:hover {
+  background: #003322;
 }
 
 /* Cards */
@@ -59,16 +115,11 @@ video {
   background: #061a12;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 0 25px rgba(0,255,179,0.2);
 }
 .section h3 {
   font-size: 18px;
   color: #00ffb3;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 }
 
 /* Buttons */
@@ -79,13 +130,9 @@ video {
   border-radius: 12px;
   font-size: 16px;
   font-weight: bold;
-  color: #fff;
   background: linear-gradient(90deg, #00ffb3, #0099ff);
+  color: white;
   cursor: pointer;
-  transition: 0.3s;
-}
-.btn:hover {
-  transform: scale(1.05);
 }
 
 /* Popup */
@@ -99,44 +146,30 @@ video {
   z-index: 999;
 }
 .popup-box {
-  width: 88%;
+  width: 90%;
   max-width: 380px;
-  background: #0a0a0a;
-  border-radius: 20px;
-  padding: 25px 20px;
-  border: 1px solid rgba(0,255,179,0.5);
-  box-shadow: 0 0 25px rgba(0,255,179,0.4), 0 0 40px rgba(0,255,255,0.2);
+  background: #111;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #00ffb3;
+  text-align: center;
 }
-.popup-box h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-.popup-box p {
-  color: #ccc;
-  font-size: 15px;
-  margin-bottom: 20px;
-}
-
-/* Popup Buttons */
 .popup-btn {
   width: 100%;
-  border: none;
+  padding: 12px;
   border-radius: 10px;
+  margin-top: 10px;
   font-size: 17px;
-  font-weight: bold;
-  padding: 12px 0;
   cursor: pointer;
-  margin-bottom: 12px;
-  transition: 0.3s;
+  border: none;
 }
 .popup-btn:first-child {
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-  color: #fff;
+  background: #00c6ff;
 }
 .popup-btn:last-child {
-  background: #1a1a1a;
+  background: transparent;
   border: 1px solid #00ffb3;
-  color: #fff;
+  color: white;
 }
 </style>
 </head>
@@ -146,93 +179,115 @@ video {
 <!-- Popup -->
 <div id="popup">
   <div class="popup-box">
-    <h2>💬 Support Us!</h2>
-    <p>Join our Telegram channel <strong style="color:#00ffb3;">CRICKET YODDHA</strong> for instant updates, highlights & exclusive links.</p>
+    <h2>💬 Support Us</h2>
+    <p>Join our Telegram channel <b style="color:#00ffb3">CRICKET YODDHA</b> for instant updates.</p>
     <button class="popup-btn" onclick="joinNow()">Join Now</button>
     <button class="popup-btn" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- Main Page -->
-<div id="main-content" style="display:none;">
+<div id="main-content" style="display:none">
 
   <div class="header">
-    <div class="header-icon"></div>
-    CRICKET YODDHA
+    <div class="header-icon"></div> CRICKET YODDHA
   </div>
 
-  <!-- DRM STREAM PLAYER -->
   <div class="video-container">
+    <div id="loader"><div class="loader-ring"></div></div>
     <video id="video" autoplay controls></video>
+
+    <div class="quality-btn" onclick="toggleQuality()">Quality ▾</div>
+    <div class="quality-list" id="qualityList"></div>
   </div>
 
-  <!-- Follow -->
   <div class="section">
-    <h3>🔔 Follow Us for Updates</h3>
-    <button class="btn" onclick="joinNow()">Join Telegram Channel</button>
+    <h3>🔔 Follow Us</h3>
+    <button class="btn" onclick="joinNow()">Join Telegram</button>
   </div>
 
-  <!-- Share -->
   <div class="section">
-    <h3>🔗 Share This Page</h3>
-    <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
+    <h3>🔗 Share</h3>
+    <button class="btn" onclick="sharePage()">Copy & Share</button>
   </div>
+
 </div>
 
 
 <script>
-/* Telegram */
-function joinNow(){
+function joinNow() {
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
-
-/* Popup */
-function already(){
-  document.getElementById("popup").style.display = "none";
-  document.getElementById("main-content").style.display = "block";
+function already() {
+  popup.style.display="none";
+  main-content.style.display="block";
 }
 
-/* Share Page */
+/* SHARE */
 function sharePage(){
-  const shareData = {
-    title: "CRICKET YODDHA Live",
-    text: "Watch Live Cricket on CRICKET YODDHA!",
-    url: window.location.href
-  };
-
-  if (navigator.share) navigator.share(shareData);
-  else {
-    navigator.clipboard.writeText(window.location.href);
-    alert("✅ Link copied! Share it manually.");
-  }
+  navigator.clipboard.writeText(window.location.href);
+  alert("Link Copied!");
 }
 
-/* SHAKA PLAYER + CLEAKEY DRM */
+/* SHAKA PLAYER + QUALITY SELECTOR */
 async function initPlayer() {
-  const video = document.getElementById('video');
+  const video = document.getElementById("video");
   const player = new shaka.Player(video);
 
   player.configure({
-    drm: {
-      clearKeys: {
-        "2f5ed0dd0a0ca671dee3948dbbe023d4": 
-        "7039b2570d5d429c7f4a7a4058ba5135"
-      }
-    }
+    drm: { clearKeys: { 
+      "2f5ed0dd0a0ca671dee3948dbbe023d4": 
+      "7039b2570d5d429c7f4a7a4058ba5135" 
+    }}
   });
 
-  const manifestURL =
-    "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
+  const manifest = 
+  "https://aba3uy3aaaaaaaamfjv2jyrjdxcj4.otte.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/1xsggbtjku/out/v1/bfd93216daf6417298bfcc7d3015d823/cenc.mpd";
 
-  try {
-    await player.load(manifestURL);
-    console.log("DRM Stream Loaded!");
-  } catch (e) {
-    console.error("Error loading stream:", e);
-  }
+  await player.load(manifest);
+
+  /* Hide loader once playing */
+  video.onplaying = () => {
+    document.getElementById("loader").style.display="none";
+  };
+
+  /* Quality Selector */
+  const qualityList = document.getElementById("qualityList");
+  const tracks = player.getVariantTracks();
+
+  qualityList.innerHTML = "";
+  qualityList.innerHTML += `<div onclick="setQuality('auto')">Auto</div>`;
+
+  tracks.forEach(track => {
+    qualityList.innerHTML += `
+      <div onclick="setQuality(${track.id})">
+        ${track.height}p
+      </div>`;
+  });
+
+  window.player = player;
 }
 
-document.addEventListener('DOMContentLoaded', initPlayer);
+/* toggle dropdown */
+function toggleQuality(){
+  const list = document.getElementById("qualityList");
+  list.style.display = list.style.display === "block" ? "none" : "block";
+}
+
+/* Apply Quality */
+function setQuality(id){
+  if(id === 'auto'){
+    window.player.configure({ abr: { enabled: true }});
+  } else {
+    window.player.configure({ abr: { enabled: false }});
+    window.player.selectVariantTrack(
+      window.player.getVariantTracks().find(t => t.id==id),
+      true
+    );
+  }
+  toggleQuality();
+}
+
+document.addEventListener("DOMContentLoaded", initPlayer);
 </script>
 
 </body>
