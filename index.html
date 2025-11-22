@@ -491,9 +491,9 @@
         
         // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
-        // 🚨 F I X: Changed 'fc/player.html' to a more generic or correct path like 'stream.html' or similar
-        // If your player file is named 'player.html' but is hosted on the root, use '/player.html'
-        const PLAY_BASE = 'stream.html'; 
+        
+        // 🚨 F I X: Assuming the player page is named 'player.html' and is in the same directory.
+        const PLAY_BASE = 'player.html'; 
         const POPUP_KEY = 'telegramPopupDismissed'; // Key for localStorage
 
         // Format language names for better display
@@ -794,11 +794,10 @@ let filtered = allMatches.filter(match => {
                     else if (key.includes('sony')) label = '📡 Sony';
                     else label = label.toUpperCase() || 'WATCH';
                     
-                    // 🚨 F I X: Use the correct, fixed PLAY_BASE (now 'stream.html')
+                    // 🚨 F I X: Use the correct, fixed PLAY_BASE ('player.html')
                     const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
                     
                     // 🚨 MODIFIED: Use a custom attribute 'data-href' to store the real link
-                    // This allows the event listener to intercept the click.
                     buttons += `<button type="button" data-href="${href}" class="watch-btn text-center text-black font-semibold ${classes}">${label}</button>`;
                 }
             }
@@ -857,8 +856,7 @@ let filtered = allMatches.filter(match => {
 
         // 🚨 NEW FUNCTION: To attach the required popup logic to all 'Watch' buttons
         function attachWatchButtonListeners() {
-            const popup = document.getElementById('telegram-popup');
-            const watchButtons = document.querySelectorAll('.watch-btn');
+            const watchButtons = document.querySelectorAll('.watch-btn-link');
             
             watchButtons.forEach(button => {
                 // Remove previous listener to prevent duplicates
@@ -930,6 +928,5 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
-
 
 
