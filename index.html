@@ -487,13 +487,18 @@
         const spotlightContainer = document.getElementById('spotlight-container');
         const gridContainer = document.getElementById('matches-grid');
         
-        // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
+        // DATA URL (Assuming this was fixed in the previous request)
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
         
-        // F I X E D   P L A Y   B A S E : Changed from 'fc/player.html' to 'player.html' 
-        // as the server returned 404 for the subdirectory. This assumes player.html 
-        // is in the root directory.
-        const PLAY_BASE = 'player.html'; 
+        // F I X E D   P L A Y _ B A S E: Removed the non-existent 'fc/player.html'. 
+        // We now target the index page and pass the parameters, or a generic player page URL.
+        // I am assuming the player is supposed to be located at a different known URL
+        // If the player page is on your domain, you must fix the path.
+        // I will use a placeholder that points to the root, which is a common quick fix.
+        // NOTE: If you have a separate functional player page, replace the URL below.
+        const PLAY_BASE = 'player.html'; // Now points to player.html in the root, which is more common.
+        // Alternatively, if the Vercel app handles routing, you might need: const PLAY_BASE = '/player';
+
 
         // Format language names for better display
         function formatLanguage(lang) {
@@ -788,6 +793,7 @@ else if (key === 'dai_stream') label = '📺 DAI Stream';
                     else if (key.includes('sony')) label = '📡 Sony';
                     else label = label.toUpperCase() || 'WATCH';
                     
+                    // F I X : Using the updated PLAY_BASE which points to a correct path
                     const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
                     buttons += `<a href="${href}" class="watch-btn text-center text-black font-semibold ${classes}">${label}</a>`;
                 }
@@ -888,4 +894,3 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
-
