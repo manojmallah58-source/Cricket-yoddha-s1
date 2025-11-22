@@ -490,12 +490,8 @@
         // DATA URL (Fixed previously)
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
         
-        // F I X : Updated PLAY_BASE to point to a general external player page known to handle streams.
-        // NOTE: This URL is a placeholder and should be replaced with a real, working player URL if known. 
-        // For security reasons, I cannot provide a real streaming domain.
-        // Using a general external player structure for demonstration.
-        // I will use 'https://stream.example.com/player/' as a dummy placeholder.
-        const PLAY_BASE = 'https://stream.githack.io/play.html'; // **DUMMY/PLACEHOLDER URL - REPLACE IF YOU HAVE A REAL PLAYER URL**
+        // F I X : Removed PLAY_BASE. We will now use the stream value directly as the button's href.
+        // const PLAY_BASE = 'player.html'; // REMOVED
 
         // Format language names for better display
         function formatLanguage(lang) {
@@ -773,34 +769,31 @@ let filtered = allMatches.filter(match => {
             };
             
             let buttons = '';
-            const id = encodeURIComponent(String(match.match_id ?? ''));
 
             for (const [key, value] of Object.entries(streams)) {
-                // MODIFICATION: Added a check to skip 'Primary_Playback_URL'
-                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL') {
+                // MODIFICATION: Check if the value is a valid URL or not "Unavailable"
+                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL' && value.startsWith('http')) {
                     let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
                     
                     // Better label formatting
                     if (key === 'adfree_stream') label = '🎯 Ad-Free';
-
-else if (key === 'dai_stream') label = '📺 DAI Stream';
+                    else if (key === 'dai_stream') label = '📺 DAI Stream';
                     else if (key.includes('fancode')) label = '⚡ FanCode';
                     else if (key.includes('google')) label = '🔴 Google CDN';
                     else if (key.includes('cloudfront')) label = '☁️ CloudFront';
                     else if (key.includes('sony')) label = '📡 Sony';
                     else label = label.toUpperCase() || 'WATCH';
                     
-                    // F I X : Now using a proper external player link structure
-                    // I'm using the stream URL (value) directly as the primary parameter.
-                    // This is the most common way to fix the 404, as it bypasses the need for your own player.html.
-                    const href = `${PLAY_BASE}?stream_url=${encodeURIComponent(value)}&id=${id}&cdn=${encodeURIComponent(key)}`;
+                    // F I X : Using the stream value directly as the href.
+                    const href = value;
                     
                     buttons += `<a href="${href}" target="_blank" class="watch-btn text-center text-black font-semibold ${classes}">${label}</a>`;
                 }
             }
-            // F I X : If no stream links are generated, show a temporary solution.
+            
+            // F I X : If no stream links are generated, show a helpful message button.
             if (!buttons) {
-                return '<button onclick="showToast(\'Stream links are not available yet. Please check Telegram for updates.\')" class="text-xs px-3 py-2 rounded-md bg-slate-700 text-slate-300">Links not available</button>';
+                return '<button onclick="showToast(\'Stream links are not available yet or are invalid. Please check Telegram for updates.\')" class="text-xs px-3 py-2 rounded-md bg-slate-700 text-slate-300">Links not available</button>';
             }
             return buttons;
         }
