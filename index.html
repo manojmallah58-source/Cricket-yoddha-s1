@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
  <head>
@@ -490,7 +489,8 @@
         
         // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
-        const PLAY_BASE = 'player.html'; // <--- FIX: Changed from 'fc/player.html' to 'player.html'
+        // A B S O L U T E   P A T H   F I X : Use /player.html to ensure it resolves from the root.
+        const PLAY_BASE = '/player.html'; 
 
         // Format language names for better display
         function formatLanguage(lang) {
@@ -773,7 +773,7 @@ let filtered = allMatches.filter(match => {
             for (const [key, value] of Object.entries(streams)) {
                 // MODIFICATION: Added a check to skip 'Primary_Playback_URL'
                 if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL') {
-                    let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
+                    let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '', ).trim();
                     
                     // Better label formatting
                     if (key === 'adfree_stream') label = '🎯 Ad-Free';
@@ -885,4 +885,5 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
+
 
