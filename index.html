@@ -413,14 +413,11 @@
             transform: scale(0.9);
             transition: transform 0.3s ease;
             max-height: 90vh;
+            width: 90%;
+            max-width: 400px; /* Max width for Telegram Gate */
         }
         .popup-overlay.show .popup-card {
             transform: scale(1);
-        }
-        .stream-link-container {
-            word-break: break-all;
-            background: #0f172a; /* slate-900 */
-            border: 1px solid #1e293b; /* slate-800 */
         }
         
         /* Telegram Pop-up Timer */
@@ -490,77 +487,44 @@
    </div>
   </main>
 
-  <div id="action-modal" class="popup-overlay hidden">
-    <div class="popup-card w-full max-w-xl rounded-2xl p-6 md:p-8">
+  <div id="telegram-gate-modal" class="popup-overlay hidden">
+    <div class="popup-card rounded-2xl p-8 text-center">
+        <div class="text-5xl mb-4 text-sky-400">
+            <i class="fab fa-telegram-plane"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">Join Our Community</h3>
+        <p class="text-slate-400 mb-6">Get instant match links, updates, and Prediction on Telegram.</p>
         
-        <div id="telegram-gate" class="text-center">
-            <div class="text-5xl mb-4 text-sky-400">
-                <i class="fab fa-telegram-plane"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Join Our Community</h3>
-            <p class="text-slate-400 mb-6">Get instant match links, updates, and Prediction on Telegram.</p>
-            
-            <div id="gate-countdown" class="text-sm text-slate-300 mb-4">
-                Watch Links loading in <span id="telegram-timer">5</span> seconds...
-            </div>
-
-            <div class="flex flex-col gap-3">
-                <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" id="join-btn-modal" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-black bg-sky-400 hover:bg-sky-300 transition-all duration-300 transform hover:scale-105"> 
-                    <i class="fas fa-rocket mr-2"></i>Join Telegram
-                </a>
-                <button onclick="hideActionModal()" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors duration-300">
-                    Close
-                </button>
-            </div>
+        <div id="gate-countdown" class="text-sm text-slate-300 mb-4">
+            Redirecting in <span id="telegram-timer">5</span> seconds...
         </div>
 
-        <div id="stream-links-content" class="hidden">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-2xl font-bold text-white"><i class="fas fa-link mr-2 text-sky-400"></i> Stream Links</h3>
-                <button onclick="hideActionModal()" class="text-slate-400 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <p class="text-sm text-amber-300 bg-amber-900/30 p-3 rounded-lg mb-4 flex items-start gap-2">
-                <i class="fas fa-exclamation-triangle text-lg mt-0.5"></i>
-                <span>वीडियो चलाने के लिए, URL को **Copy** करें और इसे **MX Player** या **VLC** जैसे किसी भी वीडियो प्लेयर ऐप में **"Open Network Stream"** विकल्प का उपयोग करके चलाएं।</span>
-            </p>
-            
-            <div id="modal-match-title" class="text-xl font-semibold text-slate-100 mb-4"></div>
-            
-            <div id="stream-links-list" class="flex flex-col gap-3 overflow-y-auto max-h-80">
-                </div>
-
-            <div class="mt-6 pt-4 border-t border-slate-700">
-                <h4 class="text-md font-semibold text-slate-300 mb-2">Recommended Players:</h4>
-                <div class="flex gap-4">
-                    <a href="https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad" target="_blank" class="text-sm text-sky-400 hover:text-sky-300"><i class="fas fa-external-link-alt mr-1"></i> MX Player</a>
-                    <a href="https://play.google.com/store/apps/details?id=org.videolan.vlc" target="_blank" class="text-sm text-sky-400 hover:text-sky-300"><i class="fas fa-external-link-alt mr-1"></i> VLC Media Player</a>
-                </div>
-            </div>
+        <div class="flex flex-col gap-3">
+            <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" id="join-btn-modal" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-black bg-sky-400 hover:bg-sky-300 transition-all duration-300 transform hover:scale-105"> 
+                <i class="fas fa-rocket mr-2"></i>Join Telegram & Watch Now
+            </a>
+            <button onclick="hideGateModal()" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors duration-300">
+                Close
+            </button>
         </div>
-        
     </div>
   </div>
 
-  <script>
+   <script>
         const spotlightContainer = document.getElementById('spotlight-container');
         const gridContainer = document.getElementById('matches-grid');
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
         
-        // --- Modal & Gate Functions (Modified/New) ---
+        // F I X : Reverted to the path used by the live Vercel link
+        const PLAY_BASE = 'fc/player.html'; 
 
         let timerInterval;
 
-        function showWatchGate(matchData) {
-            const modal = document.getElementById('action-modal');
-            const gate = document.getElementById('telegram-gate');
-            const content = document.getElementById('stream-links-content');
+        function showWatchGate(finalUrl) {
+            const modal = document.getElementById('telegram-gate-modal');
             const timerDisplay = document.getElementById('telegram-timer');
             
             // 1. Reset and Show Modal
-            content.classList.add('hidden');
-            gate.classList.remove('hidden');
             modal.classList.add('show');
             modal.classList.remove('hidden');
 
@@ -576,92 +540,32 @@
 
                 if (countdown <= 0) {
                     clearInterval(timerInterval);
-                    showStreamLinks(matchData); // Open stream links after countdown
+                    hideGateModal(); 
+                    window.location.href = finalUrl; // Redirect after countdown
                 }
             }, 1000);
             
-            // Allow manual jump if join button is clicked
+            // 3. Handle Immediate Redirect on Join Click
             document.getElementById('join-btn-modal').onclick = () => {
-                // We keep the external Telegram link, but stop the timer and open links immediately
+                // Open Telegram link in new tab, then redirect current tab immediately
+                window.open('https://t.me/+r_4JF-IieX0wNjU9', '_blank');
                 clearInterval(timerInterval);
-                showStreamLinks(matchData);
+                hideGateModal();
+                window.location.href = finalUrl;
             };
         }
         
-        function showStreamLinks(matchData) {
-            const gate = document.getElementById('telegram-gate');
-            const content = document.getElementById('stream-links-content');
-            const linksList = document.getElementById('stream-links-list');
-            const modalTitle = document.getElementById('modal-match-title');
-            
-            // Hide Gate, Show Links Content
-            gate.classList.add('hidden');
-            content.classList.remove('hidden');
-
-            const streams = {
-                ...matchData.STREAMING_CDN,
-                adfree_stream: matchData.adfree_stream,
-                dai_stream: matchData.dai_stream
-            };
-            
-            linksList.innerHTML = '';
-            modalTitle.textContent = matchData.title || 'Match Details';
-            let foundLinks = false;
-
-            for (const [key, value] of Object.entries(streams)) {
-                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL' && value.startsWith('http')) {
-                    foundLinks = true;
-                    let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
-                    
-                    if (key === 'adfree_stream') label = '🎯 Ad-Free Stream';
-                    else if (key === 'dai_stream') label = '📺 DAI Stream';
-                    else if (key.includes('fancode')) label = '⚡ FanCode Stream';
-                    else if (key.includes('google')) label = '🔴 Google CDN';
-                    else if (key.includes('cloudfront')) label = '☁️ CloudFront CDN';
-                    else if (key.includes('sony')) label = '📡 Sony Stream';
-                    else label = label.toUpperCase() || 'WATCH';
-
-                    const item = document.createElement('div');
-                    item.className = 'flex flex-col md:flex-row md:items-center justify-between stream-link-container p-3 rounded-lg';
-                    item.innerHTML = `
-                        <div class="text-sm font-semibold text-sky-400 mb-2 md:mb-0 md:w-32">${label}</div>
-                        <div class="flex items-center flex-1 min-w-0">
-                            <span class="text-xs text-slate-400 truncate flex-1">${value}</span>
-                            <button onclick="copyLink('${value}', '${label}')" class="ml-3 text-slate-300 hover:text-white transition-colors flex-shrink-0 p-1 rounded-full bg-slate-700 hover:bg-sky-600">
-                                <i class="fas fa-copy text-sm"></i>
-                            </button>
-                        </div>
-                    `;
-                    linksList.appendChild(item);
-                }
-            }
-
-            if (!foundLinks) {
-                linksList.innerHTML = '<p class="text-slate-500 text-center py-4">Sorry, no valid stream links were found for this match right now.</p>';
-            }
-        }
-        
-        function hideActionModal() {
+        function hideGateModal() {
             // Stop the timer if running
             if (timerInterval) clearInterval(timerInterval);
             
-            document.getElementById('action-modal').classList.remove('show');
+            document.getElementById('telegram-gate-modal').classList.remove('show');
             setTimeout(() => {
-                document.getElementById('action-modal').classList.add('hidden');
+                document.getElementById('telegram-gate-modal').classList.add('hidden');
             }, 300);
         }
-
-        function copyLink(link, label) {
-            navigator.clipboard.writeText(link).then(() => {
-                showToast(`✅ ${label} Link copied! Now paste into VLC/MX Player.`);
-            }).catch(err => {
-                console.error('Could not copy text: ', err);
-                showToast('❌ Failed to copy link. Try manually.');
-            });
-        }
-
-
-        // --- Utility Functions (Kept from previous version) ---
+        
+        // --- Utility Functions ---
 
         function showToast(message, duration = 3000) {
             const existingToast = document.querySelector('.toast');
@@ -867,10 +771,44 @@
             }
         }
 
+        function generateButtons(match, classes) {
+            const streams = {
+                ...match.STREAMING_CDN,
+                adfree_stream: match.adfree_stream,
+                dai_stream: match.dai_stream
+            };
+            
+            let buttons = '';
+            const id = encodeURIComponent(String(match.match_id ?? ''));
+
+            for (const [key, value] of Object.entries(streams)) {
+                // MODIFICATION: Added a check to skip 'Primary_Playback_URL'
+                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL') {
+                    let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
+                    
+                    // Better label formatting
+                    if (key === 'adfree_stream') label = '🎯 Ad-Free';
+                    else if (key === 'dai_stream') label = '📺 DAI Stream';
+                    else if (key.includes('fancode')) label = '⚡ FanCode';
+                    else if (key.includes('google')) label = '🔴 Google CDN';
+                    else if (key.includes('cloudfront')) label = '☁️ CloudFront';
+                    else if (key.includes('sony')) label = '📡 Sony';
+                    else label = label.toUpperCase() || 'WATCH';
+                    
+                    // F I X : Construct the final player URL
+                    const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
+                    
+                    // F I X : Call the Gate function with the final URL
+                    buttons += `<button onclick="showWatchGate('${href}')" class="watch-btn text-center text-black font-semibold ${classes}">${label}</button>`;
+                }
+            }
+            return buttons || '<p class="text-slate-400 text-sm">Stream links will appear when available</p>';
+        }
+
+
         function renderSpotlight(match) {
             const imgSrc = match.image || 'https://fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg';
-            // F I X: Changed button function to open Gate/Modal
-            const buttonsHTML = `<button onclick='showWatchGate(${JSON.stringify(match)})' class="watch-btn text-center text-black font-semibold text-sm px-5 py-2.5 rounded-lg"><i class="fas fa-play-circle mr-2"></i> WATCH LIVE</button>`;
+            const buttonsHTML = generateButtons(match, 'text-sm px-5 py-2.5 rounded-lg');
 
             spotlightContainer.innerHTML = `
                 <div class="spotlight-card rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center gap-8 p-6 md:p-8">
@@ -900,8 +838,7 @@
             const isLive = match.status?.toUpperCase() === 'LIVE';
             const imgSrc = match.image || 'https://fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg';
             
-            // F I X: Changed button function to open Gate/Modal
-            const buttonsHTML = `<button onclick='showWatchGate(${JSON.stringify(match)})' class="watch-btn text-center text-black font-semibold text-xs px-3 py-2 rounded-md"><i class="fas fa-play-circle mr-1"></i> Watch Stream</button>`;
+            const buttonsHTML = generateButtons(match, 'text-xs px-3 py-2 rounded-md');
 
             card.innerHTML = 
                 `<div class="relative">
@@ -944,8 +881,6 @@
             });
         }
         
-        // F I X : Removed handlePopup and integrated logic into showWatchGate
-
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             fetchAndRender();
