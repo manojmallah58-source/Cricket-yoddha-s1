@@ -487,11 +487,9 @@
         const spotlightContainer = document.getElementById('spotlight-container');
         const gridContainer = document.getElementById('matches-grid');
         
-        // DATA URL (Fixed previously)
+        // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
-        
-        // F I X : Removed PLAY_BASE. We will now use the stream value directly as the button's href.
-        // const PLAY_BASE = 'player.html'; // REMOVED
+        const PLAY_BASE = 'fc/player.html';
 
         // Format language names for better display
         function formatLanguage(lang) {
@@ -769,33 +767,28 @@ let filtered = allMatches.filter(match => {
             };
             
             let buttons = '';
+            const id = encodeURIComponent(String(match.match_id ?? ''));
 
             for (const [key, value] of Object.entries(streams)) {
-                // MODIFICATION: Check if the value is a valid URL or not "Unavailable"
-                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL' && value.startsWith('http')) {
+                // MODIFICATION: Added a check to skip 'Primary_Playback_URL'
+                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL') {
                     let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
                     
                     // Better label formatting
                     if (key === 'adfree_stream') label = '🎯 Ad-Free';
-                    else if (key === 'dai_stream') label = '📺 DAI Stream';
+
+else if (key === 'dai_stream') label = '📺 DAI Stream';
                     else if (key.includes('fancode')) label = '⚡ FanCode';
                     else if (key.includes('google')) label = '🔴 Google CDN';
                     else if (key.includes('cloudfront')) label = '☁️ CloudFront';
                     else if (key.includes('sony')) label = '📡 Sony';
                     else label = label.toUpperCase() || 'WATCH';
                     
-                    // F I X : Using the stream value directly as the href.
-                    const href = value;
-                    
-                    buttons += `<a href="${href}" target="_blank" class="watch-btn text-center text-black font-semibold ${classes}">${label}</a>`;
+                    const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
+                    buttons += `<a href="${href}" class="watch-btn text-center text-black font-semibold ${classes}">${label}</a>`;
                 }
             }
-            
-            // F I X : If no stream links are generated, show a helpful message button.
-            if (!buttons) {
-                return '<button onclick="showToast(\'Stream links are not available yet or are invalid. Please check Telegram for updates.\')" class="text-xs px-3 py-2 rounded-md bg-slate-700 text-slate-300">Links not available</button>';
-            }
-            return buttons;
+            return buttons || '<p class="text-slate-400 text-sm">Stream links will appear when available</p>';
         }
 
         function initInteractiveEffects() {
