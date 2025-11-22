@@ -489,7 +489,8 @@
         
         // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
-        const PLAY_BASE = 'fc/player.html';
+        // Vercel 404 error ko theek karne ke liye path ko 'player.html' kiya gaya hai.
+        const PLAY_BASE = 'player.html'; // <<< F I X E D  P A T H
 
         // Format language names for better display
         function formatLanguage(lang) {
@@ -884,6 +885,7 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
+
 
 
 
