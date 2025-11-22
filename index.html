@@ -388,42 +388,24 @@
             50% { opacity: 0.8; }
         }
 
-        /* --- General Pop-up/Modal Styles --- */
+        /* --- Telegram Popup --- */
         .popup-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
         .popup-overlay.show {
             opacity: 1;
             visibility: visible;
         }
         .popup-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
-            border: 1px solid var(--primary-glow);
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.7);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-            max-height: 90vh;
-            width: 90%;
-            max-width: 400px; /* Max width for Telegram Gate */
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         }
         .popup-overlay.show .popup-card {
-            transform: scale(1);
-        }
-        
-        /* Telegram Pop-up Timer */
-        #telegram-timer {
-            font-weight: bold;
-            color: var(--secondary-glow);
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
     </style>
  </head>
@@ -460,7 +442,8 @@
       <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold" data-filter="live"><i class="fas fa-circle mr-2 text-red-500"></i>Live</button>
       <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold" data-filter="upcoming"><i class="fas fa-clock mr-2"></i>Upcoming</button>
       <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold" data-filter="cricket"><i class="fas fa-baseball-ball mr-2"></i>Cricket</button>
-     </div>
+
+</div>
     </div>
    </div>
    <div class="mb-10 px-2">
@@ -486,108 +469,29 @@
     <p class="text-slate-500">Try adjusting your search or filters</p>
    </div>
   </main>
-
-  <div id="telegram-gate-modal" class="popup-overlay hidden">
-    <div class="popup-card rounded-2xl p-8 text-center">
-        <div class="text-5xl mb-4 text-sky-400">
-            <i class="fab fa-telegram-plane"></i>
-        </div>
-        <h3 class="text-2xl font-bold text-white mb-2">Join Our Community</h3>
-        <p class="text-slate-400 mb-6">Get instant match links, updates, and Prediction on Telegram.</p>
-        
-        <div id="gate-countdown" class="text-sm text-slate-300 mb-4">
-            Redirecting in <span id="telegram-timer">5</span> seconds...
-        </div>
-
-        <div class="flex flex-col gap-3">
-            <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" id="join-btn-modal" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-black bg-sky-400 hover:bg-sky-300 transition-all duration-300 transform hover:scale-105"> 
-                <i class="fas fa-rocket mr-2"></i>Join Telegram & Watch Now
-            </a>
-            <button onclick="hideGateModal()" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors duration-300">
-                Close
-            </button>
-        </div>
+  <div id="telegram-popup" class="popup-overlay fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+   <div class="popup-card w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900/80 shadow-2xl shadow-sky-500/10">
+    <div class="p-8 text-center">
+     <div class="text-5xl mb-4 text-sky-400">
+      <i class="fab fa-telegram-plane"></i>
+     </div>
+     <h3 class="text-2xl font-bold text-white mb-2">Join Our Community</h3>
+     <p class="text-slate-400 mb-6">Get instant match links, updates, and Prediction on Telegram.</p>
+     <div class="flex flex-col gap-3">
+      <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" id="join-btn" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-black bg-sky-400 hover:bg-sky-300 transition-all duration-300 transform hover:scale-105"> <i class="fas fa-rocket mr-2"></i>Join Now </a>
+      <button id="close-popup-btn" class="w-full text-center px-6 py-3 rounded-lg font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors duration-300">Already Joined</button>
+     </div>
     </div>
-  </div>
-
+   </div>
    <script>
         const spotlightContainer = document.getElementById('spotlight-container');
         const gridContainer = document.getElementById('matches-grid');
+        
+        // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
-        
-        // F I X : Reverted to the path used by the live Vercel link
-        const PLAY_BASE = 'fc/player.html'; 
+        const PLAY_BASE = 'fc/player.html';
 
-        let timerInterval;
-
-        function showWatchGate(finalUrl) {
-            const modal = document.getElementById('telegram-gate-modal');
-            const timerDisplay = document.getElementById('telegram-timer');
-            
-            // 1. Reset and Show Modal
-            modal.classList.add('show');
-            modal.classList.remove('hidden');
-
-            // 2. Start Countdown
-            let countdown = 5;
-            timerDisplay.textContent = countdown;
-
-            if (timerInterval) clearInterval(timerInterval);
-
-            timerInterval = setInterval(() => {
-                countdown--;
-                timerDisplay.textContent = countdown;
-
-                if (countdown <= 0) {
-                    clearInterval(timerInterval);
-                    hideGateModal(); 
-                    window.location.href = finalUrl; // Redirect after countdown
-                }
-            }, 1000);
-            
-            // 3. Handle Immediate Redirect on Join Click
-            document.getElementById('join-btn-modal').onclick = () => {
-                // Open Telegram link in new tab, then redirect current tab immediately
-                window.open('https://t.me/+r_4JF-IieX0wNjU9', '_blank');
-                clearInterval(timerInterval);
-                hideGateModal();
-                window.location.href = finalUrl;
-            };
-        }
-        
-        function hideGateModal() {
-            // Stop the timer if running
-            if (timerInterval) clearInterval(timerInterval);
-            
-            document.getElementById('telegram-gate-modal').classList.remove('show');
-            setTimeout(() => {
-                document.getElementById('telegram-gate-modal').classList.add('hidden');
-            }, 300);
-        }
-        
-        // --- Utility Functions ---
-
-        function showToast(message, duration = 3000) {
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) existingToast.remove();
-            
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = 
-                `<div class="flex items-center gap-3">
-                    <i class="fas fa-check-circle text-green-400 text-xl"></i>
-                    <span class="text-slate-200">${message}</span>
-                </div>`
-            ;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, duration);
-        }
-        
+        // Format language names for better display
         function formatLanguage(lang) {
             if (!lang) return '';
             
@@ -606,6 +510,7 @@
             return languageMap[lang.toUpperCase()] || `🌐 ${lang.charAt(0) + lang.slice(1).toLowerCase()}`;
         }
 
+        // Get score display for live matches
         function getScoreDisplay(match) {
             if (!match.teams || match.teams.length < 2) return '';
             
@@ -618,7 +523,8 @@
             if (team1.cricketScore && team1.cricketScore.length > 0) {
                 const s = team1.cricketScore[0];
                 score1 = `${s.runs}/${s.wickets}`;
-            }
+
+}
             
             if (team2.cricketScore && team2.cricketScore.length > 0) {
                 const s = team2.cricketScore[0];
@@ -638,6 +544,7 @@
             return '';
         }
 
+        // Create particle background
         function createParticles() {
             const container = document.getElementById('particles');
             const particleCount = 30;
@@ -652,6 +559,7 @@
             }
         }
 
+        // Update countdown timers
         function updateCountdowns() {
             const countdowns = document.querySelectorAll('.countdown');
             countdowns.forEach(countdown => {
@@ -678,12 +586,38 @@
                 }
             });
         }
-        
+
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = 
+                `<div class="flex items-center gap-3">
+                    <i class="fas fa-info-circle text-sky-400 text-xl"></i>
+                    <span class="text-slate-200">${message}</span>
+                </div>`
+            ;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, duration);
+        }
+
+        // Search and filter functionality
+        let allMatches = [];
+        let currentFilter = 'all';
+
         function filterMatches(searchTerm = '', filter = 'all') {
             const grid = document.getElementById('matches-grid');
             const noResults = document.getElementById('no-results');
 
-            let filtered = allMatches.filter(match => {
+let filtered = allMatches.filter(match => {
                 const matchText = `${match.title} ${match.tournament} ${match.category}`.toLowerCase();
                 const matchesSearch = matchText.includes(searchTerm.toLowerCase());
                 
@@ -736,6 +670,7 @@
                 const data = await res.json();
                 let matches = Array.isArray(data.matches) ? data.matches : [];
 
+                // C O R R E C T I O N: Ensure the initial skeleton is removed before rendering
                 gridContainer.innerHTML = ''; 
 
                 matches.sort((a, b) => {
@@ -744,6 +679,7 @@
                     return bIsLive - aIsLive;
                 });
 
+                // Update stats
                 const liveCount = matches.filter(m => m.status?.toUpperCase() === 'LIVE').length;
                 const upcomingCount = matches.filter(m => m.status?.toUpperCase() !== 'LIVE').length;
                 
@@ -751,6 +687,7 @@
                 document.getElementById('total-count').textContent = matches.length;
                 document.getElementById('upcoming-count').textContent = upcomingCount;
 
+                // Handle Spotlight
                 spotlightContainer.innerHTML = '';
                 const firstLiveMatch = matches.find(m => m.status?.toUpperCase() === 'LIVE');
                 if (firstLiveMatch) {
@@ -771,41 +708,6 @@
             }
         }
 
-        function generateButtons(match, classes) {
-            const streams = {
-                ...match.STREAMING_CDN,
-                adfree_stream: match.adfree_stream,
-                dai_stream: match.dai_stream
-            };
-            
-            let buttons = '';
-            const id = encodeURIComponent(String(match.match_id ?? ''));
-
-            for (const [key, value] of Object.entries(streams)) {
-                // MODIFICATION: Added a check to skip 'Primary_Playback_URL'
-                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL') {
-                    let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
-                    
-                    // Better label formatting
-                    if (key === 'adfree_stream') label = '🎯 Ad-Free';
-                    else if (key === 'dai_stream') label = '📺 DAI Stream';
-                    else if (key.includes('fancode')) label = '⚡ FanCode';
-                    else if (key.includes('google')) label = '🔴 Google CDN';
-                    else if (key.includes('cloudfront')) label = '☁️ CloudFront';
-                    else if (key.includes('sony')) label = '📡 Sony';
-                    else label = label.toUpperCase() || 'WATCH';
-                    
-                    // F I X : Construct the final player URL
-                    const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
-                    
-                    // F I X : Call the Gate function with the final URL
-                    buttons += `<button onclick="showWatchGate('${href}')" class="watch-btn text-center text-black font-semibold ${classes}">${label}</button>`;
-                }
-            }
-            return buttons || '<p class="text-slate-400 text-sm">Stream links will appear when available</p>';
-        }
-
-
         function renderSpotlight(match) {
             const imgSrc = match.image || 'https://fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg';
             const buttonsHTML = generateButtons(match, 'text-sm px-5 py-2.5 rounded-lg');
@@ -814,7 +716,8 @@
                 <div class="spotlight-card rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center gap-8 p-6 md:p-8">
                     <div class="relative rounded-lg overflow-hidden aspect-video">
                         <img src="${imgSrc}" alt="${match.title}" class="w-full h-full object-cover object-top">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                         <div class="spotlight-live-badge absolute top-4 left-4 text-xs font-bold px-3 py-1.5 rounded-full text-white shadow-lg">
                             <i class="fas fa-circle text-xs mr-1.5 animate-ping absolute opacity-75"></i>
                             <i class="fas fa-circle text-xs mr-1.5"></i>
@@ -837,7 +740,6 @@
             
             const isLive = match.status?.toUpperCase() === 'LIVE';
             const imgSrc = match.image || 'https://fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg';
-            
             const buttonsHTML = generateButtons(match, 'text-xs px-3 py-2 rounded-md');
 
             card.innerHTML = 
@@ -857,6 +759,37 @@
             return card;
         }
 
+        function generateButtons(match, classes) {
+            const streams = {
+                ...match.STREAMING_CDN,
+                adfree_stream: match.adfree_stream,
+                dai_stream: match.dai_stream
+            };
+            
+            let buttons = '';
+            const id = encodeURIComponent(String(match.match_id ?? ''));
+
+            for (const [key, value] of Object.entries(streams)) {
+                // MODIFICATION: Added a check to skip 'Primary_Playback_URL'
+                if (value && value !== "Unavailable" && key.toLowerCase() !== 'language' && key !== 'Primary_Playback_URL') {
+                    let label = key.replace(/_/g, ' ').replace(/(cdn|stream)/i, '').trim();
+                    
+                    // Better label formatting
+                    if (key === 'adfree_stream') label = '🎯 Ad-Free';
+
+else if (key === 'dai_stream') label = '📺 DAI Stream';
+                    else if (key.includes('fancode')) label = '⚡ FanCode';
+                    else if (key.includes('google')) label = '🔴 Google CDN';
+                    else if (key.includes('cloudfront')) label = '☁️ CloudFront';
+                    else if (key.includes('sony')) label = '📡 Sony';
+                    else label = label.toUpperCase() || 'WATCH';
+                    
+                    const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
+                    buttons += `<a href="${href}" class="watch-btn text-center text-black font-semibold ${classes}">${label}</a>`;
+                }
+            }
+            return buttons || '<p class="text-slate-400 text-sm">Stream links will appear when available</p>';
+        }
 
         function initInteractiveEffects() {
             const cards = document.querySelectorAll('.match-card');
@@ -881,9 +814,35 @@
             });
         }
         
+        function handlePopup() {
+            const popup = document.getElementById('telegram-popup');
+            const closeBtn = document.getElementById('close-popup-btn');
+            const joinBtn = document.getElementById('join-btn');
+            const POPUP_KEY = 'telegramPopupDismissed';
+
+            if (localStorage.getItem(POPUP_KEY)) {
+                return;
+            }
+
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 3000);
+
+            function dismissPopup() {
+                popup.classList.remove('show');
+                localStorage.setItem(POPUP_KEY, 'true');
+            }
+
+            closeBtn.addEventListener('click', dismissPopup);
+            joinBtn.addEventListener('click', () => {
+                setTimeout(dismissPopup, 500); 
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             fetchAndRender();
+            handlePopup();
             
             // Search functionality
             const searchInput = document.getElementById('search-input');
@@ -905,7 +864,8 @@
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
+
+btn.classList.add('active');
                     currentFilter = btn.dataset.filter;
                     filterMatches(searchInput.value, currentFilter);
                 });
