@@ -492,8 +492,8 @@
         // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
         
-        // 🚨 F I X: Changed 'player.html' to '/player.html' to ensure it links from the root (for Vercel/Netlify hosting)
-        const PLAY_BASE = '/player.html'; 
+        // 🚨 F I X: Reverted to original 'fc/player.html' path. If this fails, the file is definitely missing or the path needs to be updated by the user.
+        const PLAY_BASE = 'fc/player.html'; 
         const POPUP_KEY = 'telegramPopupDismissed'; // Key for localStorage
 
         // Format language names for better display
@@ -794,7 +794,7 @@ let filtered = allMatches.filter(match => {
                     else if (key.includes('sony')) label = '📡 Sony';
                     else label = label.toUpperCase() || 'WATCH';
                     
-                    // 🚨 F I X: Use the fixed PLAY_BASE ('/player.html')
+                    // 🚨 F I X: Use the PLAY_BASE ('fc/player.html')
                     const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
                     
                     // 🚨 MODIFIED: Use a button element and 'data-href' for click interception
@@ -832,11 +832,9 @@ let filtered = allMatches.filter(match => {
             const closeBtn = document.getElementById('close-popup-btn');
             const joinBtn = document.getElementById('join-btn');
             
-            // 🚨 F I X: Removed the initial check for localStorage to ensure popup logic works correctly
-            
+            // 🚨 F I X: Store the dismissal status in localStorage when dismissed
             function dismissPopup() {
                 popup.classList.remove('show');
-                // Store the dismissal status in localStorage
                 localStorage.setItem(POPUP_KEY, 'true');
             }
 
@@ -869,16 +867,14 @@ let filtered = allMatches.filter(match => {
             const link = button.getAttribute('data-href');
             const popup = document.getElementById('telegram-popup');
             
-            // 🚨 F I X: Added '|| popup.classList.contains('show')' logic to prevent link opening when popup is closing
-            
-            // Check if the popup has been dismissed OR if the current link is already the popup's focus
+            // Check if the popup has been dismissed
             if (localStorage.getItem(POPUP_KEY) === 'true') {
                 // If dismissed, proceed to the stream link
                 window.location.href = link;
             } else {
                 // If not dismissed, prevent default action (navigation) and show popup
                 e.preventDefault();
-                // Store the target link temporarily so we can navigate to it after popup dismissal if needed
+                // Store the target link temporarily so we can navigate to it after popup dismissal
                 sessionStorage.setItem('pendingStreamLink', link); 
                 popup.classList.add('show');
             }
@@ -946,6 +942,7 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
+
 
 
 
