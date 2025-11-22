@@ -2,154 +2,91 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live Streaming</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Live TV – Auto M3U Loader</title>
 <style>
-    body {
-        background: #0d0f1a;
-        color: white;
-        font-family: Arial, sans-serif;
-        padding: 20px;
-    }
-
-    .search {
-        width: 100%;
-        padding: 12px;
-        border-radius: 14px;
-        border: 1px solid #333;
-        background: #1a1d2d;
-        color: #ccc;
-        font-size: 16px;
-    }
-
-    .tabs {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
-
-    .tab {
-        padding: 10px 18px;
-        background: #1a1d2d;
-        border-radius: 12px;
-        cursor: pointer;
-    }
-
-    .active {
-        background: #1e56ff;
-    }
-
-    .title {
-        margin-top: 25px;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .sub {
-        color: #4aff4a;
-        margin-top: 3px;
-        font-size: 14px;
-    }
-
-    .card {
-        background: #1a1d2d;
-        border: 1px solid #333;
-        padding: 15px;
-        border-radius: 16px;
-        margin-top: 15px;
-    }
-
-    .status {
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 12px;
-    }
-
-    .live {
-        background: red;
-    }
-
-    .upcoming {
-        background: orange;
-    }
-
-    .other {
-        background: gray;
-    }
+body { font-family: Arial; margin:0; background:#111; color:white; }
+.header { padding:15px; background:#222; font-size:20px; font-weight:bold; }
+.card { background:#1e1e1e; padding:15px; border-radius:10px; margin:10px; }
+.card img { width:100%; border-radius:10px; }
+.btn { background:#ff4747; padding:10px 15px; border-radius:6px; display:inline-block; color:white; text-decoration:none; }
+#popup {
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.7); display:flex;
+    align-items:center; justify-content:center;
+}
+.popup-box {
+    background:#fff; color:#000; padding:20px;
+    border-radius:10px; width:80%; text-align:center;
+}
 </style>
 </head>
-
 <body>
 
-<input class="search" placeholder="Search matches, teams, or tournament" />
-
-<div class="tabs">
-    <div class="tab active" onclick="setFilter('all')" id="tab-all">All</div>
-    <div class="tab" onclick="setFilter('live')" id="tab-live">🔴 Live</div>
-    <div class="tab" onclick="setFilter('upcoming')" id="tab-upcoming">⏳ Upcoming</div>
-    <div class="tab">🏏 Cricket</div>
+<!-- POPUP -->
+<div id="popup">
+    <div class="popup-box">
+        <h2>Welcome!</h2>
+        <p>Click continue to load Live Channels.</p>
+        <button onclick="closePopup()">Continue</button>
+    </div>
 </div>
 
-<div class="title">Live & Upcoming Matches</div>
-<div class="sub">● Auto-refreshing</div>
-
-<div id="match-list"></div>
+<div class="header">Live TV Channels</div>
+<div id="content"></div>
 
 <script>
-let filter = "all";
-
-function setFilter(f) {
-    filter = f;
-
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    document.getElementById("tab-" + f).classList.add("active");
-
-    loadMatches();
+// Close popup
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    loadM3U();
 }
 
-async function loadMatches() {
-    // ---- YAHAN APNA API/M3U CONNECT KAR SAKTE HAIN ----
-    
-    const matches = [https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.m3u]
-        { title: "India A vs Bangladesh A", status: "live", time: "Live Now" },
-        { title: "Australia vs England", status: "upcoming", time: "Today 7:30 PM" },
-        { title: "NZ vs SA", status: "other", time: "Tomorrow" }
-    ];
+// M3U URL
+const M3U_URL = "https://raw.githubusercontent.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.m3u";
 
-    let filtered = matches;
+// Fetch & Parse M3U
+async function loadM3U() {
+    try {
+        const res = await fetch(M3U_URL);
+        const text = await res.text();
 
-    if (filter === "live") filtered = matches.filter(m => m.status === "live");
-    if (filter === "upcoming") filtered = matches.filter(m => m.status === "upcoming");
+        const lines = text.split("\n");
+        const content = document.getElementById("content");
 
-    const container = document.getElementById("match-list");
-    container.innerHTML = "";
+        let name = "";
+        let logo = "";
 
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="card" style="opacity:0.4; height:80px;"></div>`;
-        return;
-    }
+        lines.forEach(line => {
+            line = line.trim();
 
-    filtered.forEach(m => {
-        container.innerHTML += `
-            <div class="card">
-                <div style="display:flex; justify-content:space-between;">
-                    <div style="font-size:18px; font-weight:bold;">${m.title}</div>
-                    <div class="status ${m.status}">
-                        ${m.status.toUpperCase()}
-                    </div>
+            if (line.startsWith("#EXTINF")) {
+                // Extract name
+                const nameMatch = line.match(/,(.*)$/);
+                name = nameMatch ? nameMatch[1] : "Unknown Channel";
+
+                // Extract logo
+                const logoMatch = line.match(/tvg-logo="(.*?)"/);
+                logo = logoMatch ? logoMatch[1] : "https://via.placeholder.com/500x300?text=No+Image";
+            }
+
+            if (line.startsWith("http")) {
+                const streamURL = line;
+
+                content.innerHTML += `
+                <div class="card">
+                    <img src="${logo}">
+                    <h3>${name}</h3>
+                    <a class="btn" href="player.html?url=${encodeURIComponent(streamURL)}">Watch Now</a>
                 </div>
-                <div style="margin-top:4px; color:#aaa;">${m.time}</div>
-            </div>
-        `;
-    });
+                `;
+            }
+        });
+
+    } catch (e) {
+        console.error("Error loading M3U:", e);
+        document.getElementById("content").innerHTML = "<p>Error loading channel list.</p>";
+    }
 }
-
-// Auto refresh every 10 sec
-setInterval(loadMatches, 10000);
-
-// First load
-loadMatches();
 </script>
 
 </body>
