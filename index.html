@@ -486,10 +486,13 @@
    <script>
         const spotlightContainer = document.getElementById('spotlight-container');
         const gridContainer = document.getElementById('matches-grid');
-        // Data URL fixed in previous step
+        
+        // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
         
-        // F I X E D   P L A Y _ B A S E: Removed the 'fc/' subdirectory to fix the 404 Vercel issue.
+        // F I X E D   P L A Y   B A S E : Changed from 'fc/player.html' to 'player.html' 
+        // as the server returned 404 for the subdirectory. This assumes player.html 
+        // is in the root directory.
         const PLAY_BASE = 'player.html'; 
 
         // Format language names for better display
@@ -885,3 +888,4 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
+
