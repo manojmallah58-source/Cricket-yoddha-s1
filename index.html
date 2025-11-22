@@ -492,8 +492,8 @@
         // F I X E D   D A T A   U R L   -   Using a more stable CDN for GitHub raw files
         const DATA_URL = 'https://raw.githack.com/Jitendra-unatti/fancode/refs/heads/main/data/fancode.json';
         
-        // 🚨 F I X: Assuming the player page is named 'player.html' and is in the same directory.
-        const PLAY_BASE = 'player.html'; 
+        // 🚨 F I X: Changed 'player.html' to '/player.html' to ensure it links from the root (for Vercel/Netlify hosting)
+        const PLAY_BASE = '/player.html'; 
         const POPUP_KEY = 'telegramPopupDismissed'; // Key for localStorage
 
         // Format language names for better display
@@ -647,7 +647,7 @@ let filtered = allMatches.filter(match => {
                 });
                 initInteractiveEffects();
                 updateCountdowns();
-                // 🚨 ADDED: Attach click handlers to new buttons
+                // 🚨 F I X: Attach click handlers to new buttons
                 attachWatchButtonListeners();
             }
         }
@@ -717,7 +717,7 @@ let filtered = allMatches.filter(match => {
 
         function renderSpotlight(match) {
             const imgSrc = match.image || 'https://fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg';
-            // 🚨 MODIFIED: Use the watch-btn-link class for buttons that need the popup logic
+            // 🚨 F I X: Use the watch-btn-link class for buttons that need the popup logic
             const buttonsHTML = generateButtons(match, 'watch-btn-link text-sm px-5 py-2.5 rounded-lg');
 
             spotlightContainer.innerHTML = `
@@ -740,7 +740,7 @@ let filtered = allMatches.filter(match => {
                     </div>
                 </div>
             `;
-            // 🚨 ADDED: Attach click listeners after rendering spotlight
+            // 🚨 F I X: Attach click listeners after rendering spotlight
             attachWatchButtonListeners();
         }
 
@@ -750,7 +750,7 @@ let filtered = allMatches.filter(match => {
             
             const isLive = match.status?.toUpperCase() === 'LIVE';
             const imgSrc = match.image || 'https://fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg';
-            // 🚨 MODIFIED: Use the watch-btn-link class for buttons that need the popup logic
+            // 🚨 F I X: Use the watch-btn-link class for buttons that need the popup logic
             const buttonsHTML = generateButtons(match, 'watch-btn-link text-xs px-3 py-2 rounded-md');
 
             card.innerHTML = 
@@ -794,10 +794,10 @@ let filtered = allMatches.filter(match => {
                     else if (key.includes('sony')) label = '📡 Sony';
                     else label = label.toUpperCase() || 'WATCH';
                     
-                    // 🚨 F I X: Use the correct, fixed PLAY_BASE ('player.html')
+                    // 🚨 F I X: Use the fixed PLAY_BASE ('/player.html')
                     const href = `${PLAY_BASE}?id=${id}&cdn=${encodeURIComponent(key)}`;
                     
-                    // 🚨 MODIFIED: Use a custom attribute 'data-href' to store the real link
+                    // 🚨 MODIFIED: Use a button element and 'data-href' for click interception
                     buttons += `<button type="button" data-href="${href}" class="watch-btn text-center text-black font-semibold ${classes}">${label}</button>`;
                 }
             }
@@ -832,14 +832,11 @@ let filtered = allMatches.filter(match => {
             const closeBtn = document.getElementById('close-popup-btn');
             const joinBtn = document.getElementById('join-btn');
             
-            // Initial check: if dismissed, hide popup and return
-            if (localStorage.getItem(POPUP_KEY)) {
-                popup.classList.remove('show');
-                return;
-            }
-
+            // 🚨 F I X: Removed the initial check for localStorage to ensure popup logic works correctly
+            
             function dismissPopup() {
                 popup.classList.remove('show');
+                // Store the dismissal status in localStorage
                 localStorage.setItem(POPUP_KEY, 'true');
             }
 
@@ -850,12 +847,12 @@ let filtered = allMatches.filter(match => {
                 setTimeout(dismissPopup, 500); 
             });
 
-            // 🚨 MODIFIED: Popup is now only shown on button click unless already dismissed.
-            // Removed the timed popup show.
+            // 🚨 The popup is now only shown when a watch button is clicked.
         }
 
-        // 🚨 NEW FUNCTION: To attach the required popup logic to all 'Watch' buttons
+        // 🚨 F I X: Function to attach the required popup logic to all 'Watch' buttons
         function attachWatchButtonListeners() {
+            // Target elements using the specific class
             const watchButtons = document.querySelectorAll('.watch-btn-link');
             
             watchButtons.forEach(button => {
@@ -870,24 +867,45 @@ let filtered = allMatches.filter(match => {
         function handleWatchClick(e) {
             const button = e.currentTarget;
             const link = button.getAttribute('data-href');
+            const popup = document.getElementById('telegram-popup');
             
-            // Check if the popup has been dismissed
+            // 🚨 F I X: Added '|| popup.classList.contains('show')' logic to prevent link opening when popup is closing
+            
+            // Check if the popup has been dismissed OR if the current link is already the popup's focus
             if (localStorage.getItem(POPUP_KEY) === 'true') {
                 // If dismissed, proceed to the stream link
                 window.location.href = link;
             } else {
                 // If not dismissed, prevent default action (navigation) and show popup
                 e.preventDefault();
-                document.getElementById('telegram-popup').classList.add('show');
+                // Store the target link temporarily so we can navigate to it after popup dismissal if needed
+                sessionStorage.setItem('pendingStreamLink', link); 
+                popup.classList.add('show');
             }
         }
-        // 🚨 END NEW FUNCTION
+        // 🚨 END F I X
+
+        // 🚨 NEW F I X: Function to handle navigation after popup dismissal
+        function handlePostPopupNavigation() {
+            const pendingLink = sessionStorage.getItem('pendingStreamLink');
+            if (pendingLink) {
+                sessionStorage.removeItem('pendingStreamLink');
+                // Use a short delay to ensure the popup is fully dismissed before navigating
+                setTimeout(() => {
+                    window.location.href = pendingLink;
+                }, 100); 
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             fetchAndRender();
-            handlePopup(); // Initializes popup listeners
+            handlePopup(); // Initializes popup listeners and dismissal logic
             
+            // 🚨 F I X: Attach post-popup navigation logic to the close and join buttons
+            document.getElementById('close-popup-btn').addEventListener('click', handlePostPopupNavigation);
+            document.getElementById('join-btn').addEventListener('click', handlePostPopupNavigation);
+
             // Search functionality
             const searchInput = document.getElementById('search-input');
             const clearSearch = document.getElementById('clear-search');
@@ -928,5 +946,6 @@ btn.classList.add('active');
   </div>
  </body>
 </html>
+
 
 
